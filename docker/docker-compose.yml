@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  node:
+    build:
+      context: ../
+      dockerfile: ./docker/node/Dockerfile
+    environment:
+      - PORT=${NODE_PORT}
+      - MONGODB_URL=${MONGODB_URL}
+    links:
+      - mongo
+    ports:
+      - 80:${NODE_PORT}
+    volumes:
+      - ../api:/app_base/api/:ro
+      - ../src:/app_base/src/:ro
+      - ../pages:/app_base/pages:rw
+      - ../static:/app_base/static:ro
+
+  mongo:
+    image: mvertes/alpine-mongo:latest
