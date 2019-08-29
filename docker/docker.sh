@@ -1,5 +1,5 @@
-export APPLICATION___NAME=${APPLICATION___NAME:-nextjs-rest-mongodb}
-export NODE_PORT=${NODE_PORT:-3000}
+APP_NAME=`python -c 'import json; print(json.loads(open("../package.json", "r").read()).get("name", ""))'`
 
-MONGO_DB_NAME=${MONGO_DB_NAME:-nextjsrest}
-export MONGODB_URL=${MONGO_URL:-mongodb://mongo:27017/$MONGO_DB_NAME}
+export APPLICATION___NAME=${APP_NAME:-unnamed-app}
+
+. ../env.sh

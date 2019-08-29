@@ -1,4 +1,5 @@
 .git
+.eslintrc
 .gitignore
 .next
 node_modules
