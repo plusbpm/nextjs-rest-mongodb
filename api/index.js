@@ -1,6 +1,6 @@
 const { MongoClient } = require("mongodb");
 
-const connectUrl = process.env.MONGODB_URL || "mongodb://127.0.0.1:27017/db";
+const connectUrl = process.env.MONGODB_URL;
 const client = new MongoClient(connectUrl, {
   useNewUrlParser: true,
   useUnifiedTopology: true

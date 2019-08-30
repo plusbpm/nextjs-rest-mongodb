@@ -3,11 +3,13 @@
   "version": "0.1.0",
   "main": "server.js",
   "scripts": {
-    "dev": ". ./env.sh; npx nodemon --watch api server.js",
-    "docker": "cd docker; ./main.sh",
+    "env": "touch .env",
+    "dev": "npm run env; npx nodemon --watch api server.js",
+    "docker": "npm run env; cd docker; ./main.sh",
     "lint": "eslint api pages src --ext .js,.jsx"
   },
   "dependencies": {
+    "dotenv-safe": "^8.1.0",
     "express": "^4.17.1",
     "mongodb": "^3.3.2",
     "next": "9.0.5",

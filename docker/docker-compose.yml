@@ -7,6 +7,7 @@ services:
       dockerfile: ./docker/node/Dockerfile
     environment:
       - PORT=5000
+      - MONGODB_URL=mongodb://mongo:27017/dockerdev
     links:
       - mongo
     ports:
@@ -15,7 +16,10 @@ services:
       - ../api:/app_base/api/:ro
       - ../src:/app_base/src/:ro
       - ../pages:/app_base/pages:rw
+      - ../server.js:/app_base/server.js:ro
       - ../static:/app_base/static:ro
+      - ../.env.example:/app_base/.env.example:ro
+      - ../.env:/app_base/.env:ro
 
   mongo:
     image: mvertes/alpine-mongo:latest
