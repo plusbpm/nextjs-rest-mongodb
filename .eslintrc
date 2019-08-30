@@ -14,10 +14,13 @@
     - import
     - jsx-a11y
     - react
+    - react-hooks
     - prettier
   rules:
     prettier/prettier: error
     react/jsx-one-expression-per-line: off
+    react-hooks/rules-of-hooks: error
+    react-hooks/exhaustive-deps: warn
     jsx-a11y/anchor-is-valid:
       - error
       - aspects:

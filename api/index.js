@@ -6,15 +6,15 @@ const client = new MongoClient(connectUrl, {
   useUnifiedTopology: true
 });
 
-module.exports = async expressApp => {
+module.exports = async server => {
   await client.connect();
 
   const db = client.db();
 
-  expressApp.get("/api/test", async (req, res) => {
+  server.get("/api/test", async (req, res) => {
     await db.createCollection("test2");
     res.send("DONE");
   });
 
-  return expressApp;
+  return server;
 };

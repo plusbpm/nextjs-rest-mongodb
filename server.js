@@ -3,27 +3,26 @@ const dotenv = require("dotenv-safe");
 const { error } = dotenv.config();
 if (error) throw error;
 
-const express = require("express");
+const fastify = require("fastify");
 const next = require("next");
 
 const mountApi = require("./api");
 
 const port = parseInt(process.env.PORT, 10);
 const dev = process.env.NODE_ENV !== "production";
-const app = next({ dev });
 
-const handle = app.getRequestHandler();
+async function start() {
+  const app = next({ dev });
+  const handle = app.getRequestHandler();
+  await app.prepare();
 
-app
-  .prepare()
-  .then(() => express())
-  .then(mountApi)
-  .then(server => {
-    server.get("*", (req, res) => handle(req, res));
+  const server = fastify();
+  await mountApi(server);
 
-    server.listen(port, err => {
-      if (err) throw err;
-      // eslint-disable-next-line no-console
-      console.log(`Ready on http://localhost:${port}`);
-    });
-  });
+  server.get("*", async ({ raw }, { res }) => handle(raw, res));
+  await server.listen(port, "0.0.0.0");
+  // eslint-disable-next-line no-console
+  console.log(`Ready on http://localhost`);
+}
+
+start();
