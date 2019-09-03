@@ -1,6 +1,6 @@
-import { createContext } from "react";
+import { createContext } from 'react';
 
-import RestClient from "./Client";
+import RestClient from './Client';
 
 const defaultClient = new RestClient();
 

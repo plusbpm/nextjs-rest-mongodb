@@ -1,4 +1,4 @@
-import RestClient from "./Client";
+import RestClient from './Client';
 
 let client;
 

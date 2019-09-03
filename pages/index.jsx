@@ -1,91 +1,42 @@
-import React from "react";
-import Link from "next/link";
-import Head from "next/head";
-import Nav from "../src/components/nav";
+import React from 'react';
+import Head from 'next/head';
 
-const Home = () => (
-  <div>
-    <Head>
-      <title>Home</title>
-    </Head>
-    <Nav />
-    <div className="hero">
-      <h1 className="title">Welcome to Next.js!</h1>
-      <p className="description">
-        To get started, edit <code>pages/index.js</code> and save to reload.
-      </p>
+import { useGetInquiry } from '../src/client';
 
-      <div className="row">
-        <Link href="https://github.com/zeit/next.js#setup">
-          <a className="card">
-            <h3>Getting Started &rarr;</h3>
-            <p>Learn more about Next.js on GitHub and in their examples.</p>
-          </a>
-        </Link>
-        <Link href="https://github.com/zeit/next.js/tree/master/examples">
-          <a className="card">
-            <h3>Examples &rarr;</h3>
-            <p>Find other example boilerplates on the Next.js GitHub.</p>
-          </a>
-        </Link>
-        <Link href="https://github.com/zeit/next.js">
-          <a className="card">
-            <h3>Create Next App &rarr;</h3>
-            <p>Was this tool helpful? Let us know how we can improve it!</p>
-          </a>
-        </Link>
-      </div>
+const Home = () => {
+  const inq = useGetInquiry('home', {
+    endpoint: '/api/test',
+    query: { asd: 2 },
+    // noAutosend: true,
+  });
+  const { canceled, data, error, isLoading, number } = inq.getState();
+  return (
+    <div>
+      <Head>
+        <title>Home</title>
+      </Head>
+      isLoading - {isLoading.toString()}
+      <br />
+      data: {JSON.stringify(data)}
+      <br />
+      error: {JSON.stringify(error && { msg: error.message })}
+      <br />
+      canceled: {JSON.stringify(canceled)}
+      <br />
+      number: {JSON.stringify(number)}
+      <br />
+      <br />
+      <button type="button" onClick={() => inq.send()}>
+        Send
+      </button>
+      <button type="button" onClick={() => inq.send({ endpoint: '/api/test2', query: {} })}>
+        Send2
+      </button>
+      <button type="button" onClick={() => inq.cancel()}>
+        Cancel
+      </button>
     </div>
-
-    <style jsx>
-      {`
-        .hero {
-          width: 100%;
-          color: #333;
-        }
-        .title {
-          margin: 0;
-          width: 100%;
-          padding-top: 80px;
-          line-height: 1.15;
-          font-size: 48px;
-        }
-        .title,
-        .description {
-          text-align: center;
-        }
-        .row {
-          max-width: 880px;
-          margin: 80px auto 40px;
-          display: flex;
-          flex-direction: row;
-          justify-content: space-around;
-        }
-        .card {
-          padding: 18px 18px 24px;
-          width: 220px;
-          text-align: left;
-          text-decoration: none;
-          color: #434343;
-          border: 1px solid #9b9b9b;
-        }
-        .card:hover {
-          border-color: #067df7;
-        }
-        .card h3 {
-          margin: 0;
-          color: #067df7;
-          font-size: 18px;
-        }
-        .card p {
-          margin: 0;
-          padding: 12px 0 0;
-          font-size: 13px;
-          color: #333;
-        }
-      `}
-    </style>
-  </div>
-);
+  );
+};
 
 export default Home;

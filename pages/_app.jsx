@@ -1,7 +1,7 @@
-import React from "react";
-import App from "next/app";
+import React from 'react';
+import App from 'next/app';
 
-import { createClient, Provider } from "../src/client";
+import { createClient, Provider } from '../src/client';
 
 const apiRoot = process.env.API_ROOT;
 
@@ -10,7 +10,7 @@ export default class MyApp extends App {
     super(props);
     this.restClient = createClient({
       apiRoot,
-      initialState: props.cacheData
+      initialState: props.cacheData,
     });
   }
 

@@ -1,6 +1,6 @@
-import { useContext } from "react";
+import { useContext } from 'react';
 
-import Context from "./Context";
+import Context from './Context';
 
 export default function useClient() {
   return useContext(Context);

@@ -1,25 +1,22 @@
-import Inquiry from "./Inquiry";
-import invariant from "../util/invariant";
+import Inquiry from './Inquiry';
+import invariant from '../util/invariant';
 
 class RestClient {
   constructor(options) {
     const { apiRoot, initialState } = options || {};
-    this.apiRoot = apiRoot || "";
+    this.apiRoot = apiRoot || '';
     this.inquiries = {};
     this.initialState = initialState;
     this.lastInquiryNumber = 0;
   }
 
-  getInquiry = (params = {}) => {
-    const { id } = params;
-    invariant(
-      typeof id === "string",
-      "Request parameters must have id as a string."
-    );
-    invariant(id.legnth > 0, "Id param is empty.");
+  getInquiry = (id, sendOptions = {}) => {
+    invariant(typeof id === 'string', "First argument 'id' is missing.");
+    invariant(id.length > 0, "First argument 'id' is empty.");
+    invariant(sendOptions.method, "Option 'method' is missing.");
     const inquiry =
       this.inquiries[id] ||
-      (this.inquiries[id] = new Inquiry(this, params, this.initialState[id]));
+      (this.inquiries[id] = new Inquiry(this, sendOptions, this.initialState[id]));
     return inquiry;
   };
 
@@ -28,10 +25,15 @@ class RestClient {
     return this.lastInquiryNumber;
   };
 
-  // extractCacheData = () => {
-  //   return Object.entries(this.inquiries);
-  // };
-  //
+  extractCacheData = () => {
+    return Object.keys(this.inquiries).reduce(
+      (acc, key) => ({
+        ...acc,
+        [key]: this.inquiries[key].getState(),
+      }),
+      {},
+    );
+  };
 }
 
 export default RestClient;

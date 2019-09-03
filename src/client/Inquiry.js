@@ -1,26 +1,25 @@
-import { stringify } from "query-string";
-import fetch from "isomorphic-unfetch";
+import { stringify } from 'query-string';
+import fetch from 'isomorphic-unfetch';
 
 class Inquiry {
-  constructor(client, params = {}, initialState) {
+  constructor(client, options, initialState) {
     this.client = client;
-    this.params = params;
+    this.method = options.method;
+    this.options = options;
     this.state = {
+      canceled: false,
       data: null,
       error: null,
       isLoading: false,
       number: null,
-      stale: false,
-      ...initialState
+      ...initialState,
     };
     this.stateChangeHandlers = [];
   }
 
-  getUrl = () => {
-    const { endpoint, query } = this.params;
+  getUrl = (endpoint = '/', query) => {
     const queryString = stringify(query);
-    const questionSign =
-      /\?/.test(endpoint) || queryString.length === 0 ? "" : "?";
+    const questionSign = /\?/.test(endpoint) || queryString.length === 0 ? '' : '?';
     return `${this.client.apiRoot}${endpoint}${questionSign}${queryString}`;
   };
 
@@ -34,13 +33,31 @@ class Inquiry {
     this.stateChangeHandlers.forEach(handler => handler(this.state));
   };
 
-  send = () => {
-    const { method, options = {} } = this.params;
-    const url = this.getUrl();
-    const number = this.client.getNextInquiryNumber();
-    this.patchState({ number, isLoading: true });
+  getAbortSignal = () => {
+    if (typeof AbortController === 'undefined') return undefined;
 
-    return fetch(url, { method, options })
+    if (this.abortController && !this.abortController.signal.aborted) {
+      return this.abortController.signal;
+    }
+
+    this.abortController = new AbortController();
+    return this.abortController.signal;
+  };
+
+  send = options => {
+    const number = this.client.getNextInquiryNumber();
+    this.abort();
+    const { endpoint, query, ...fetchOptions } = {
+      ...this.options,
+      ...options,
+      method: this.method,
+      signal: this.getAbortSignal(),
+    };
+    const url = this.getUrl(endpoint, query);
+
+    this.patchState({ options, number, isLoading: true, canceled: false, error: null });
+
+    return fetch(url, fetchOptions)
       .then(response => {
         if (!response.ok) {
           const error = new Error(response.statusText);
@@ -51,19 +68,28 @@ class Inquiry {
         return response.json();
       })
       .then(data => ({ data, error: null }))
-      .catch(error => ({ data: null, error }))
+      .catch(error => ({ error }))
       .then(results => {
-        if (number === this.state.number)
-          this.patchState({ ...results, isLoading: false });
+        if (number === this.state.number) this.patchState({ ...results, isLoading: false });
       });
   };
 
+  abort = () => {
+    if (this.abortController) {
+      this.abortController.abort();
+    }
+  };
+
   cancel = () => {
-    if (!this.state.isLoading) return;
-    this.patchState({
-      number: this.client.getNextInquiryNumber(),
-      isLoading: false
-    });
+    this.abort();
+    if (this.state.isLoading) {
+      this.patchState({
+        canceled: true,
+        error: new Error('Canceled'),
+        isLoading: false,
+        number: this.client.getNextInquiryNumber(),
+      });
+    }
   };
 
   onStateChange = handler => {
