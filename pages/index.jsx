@@ -4,10 +4,7 @@ import Head from 'next/head';
 import { useInquiry } from '../src/restClient';
 
 const Home = () => {
-  const inq = useInquiry('home', {
-    endpoint: '/test',
-    noAutosend: true,
-  });
+  const inq = useInquiry('home', { endpoint: '/test' });
   const { canceled, data, error, isLoading } = inq.getState();
   return (
     <div>
@@ -18,7 +15,9 @@ const Home = () => {
       <br />
       data: {JSON.stringify(data)}
       <br />
-      error: {JSON.stringify(error && { msg: error.message })}
+      error: {JSON.stringify(error && error.message)}
+      <br />
+      error details: {JSON.stringify(error && error.details)}
       <br />
       canceled: {JSON.stringify(canceled)}
       <br />
@@ -37,7 +36,7 @@ const Home = () => {
 };
 
 Home.getInitialProps = async ({ restClient }) => {
-  await restClient.getInquiry('home', { endpoint: '/test', query: { zxc: 1 } }).send();
+  await restClient.getInquiry('home', { endpoint: '/test' }).send();
   return {};
 };
 

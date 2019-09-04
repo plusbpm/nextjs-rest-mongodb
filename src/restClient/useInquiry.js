@@ -7,7 +7,7 @@ const useInquiry = (id, options = {}) => {
   invariant(typeof id === 'string', 'First argument (id) is required');
   const { restClient } = useRestClient();
   const [, setState] = useState();
-  const { ignoreStateChange, noAutosend, ...sendOptions } = options;
+  const { ignoreStateChange, autosend, ...sendOptions } = options;
   const inquiryInstance = restClient.getInquiry(id, sendOptions);
 
   function handleStateChange(nextState) {
@@ -19,7 +19,7 @@ const useInquiry = (id, options = {}) => {
   });
 
   useEffect(() => {
-    if (!noAutosend) inquiryInstance.send(sendOptions);
+    if (autosend) inquiryInstance.send(sendOptions);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return inquiryInstance;

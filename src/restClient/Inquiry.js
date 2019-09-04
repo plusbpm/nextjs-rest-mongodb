@@ -63,7 +63,7 @@ class Inquiry {
         return response.text().then(details => {
           const error = new Error(response.statusText);
           error.code = response.status;
-          error.details = details;
+          error.details = /^\s*</.test(details) ? undefined : details;
           return Promise.reject(error);
         });
       })
@@ -72,7 +72,7 @@ class Inquiry {
         error: {
           code: error.code || 500,
           message: error.message,
-          details: error.details || error.stack,
+          details: error.details,
         },
       }))
       .then(results => {
