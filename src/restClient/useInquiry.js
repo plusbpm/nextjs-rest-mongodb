@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 
 import invariant from '../util/invariant';
-import useClient from './useClient';
+import useRestClient from './useRestClient';
 
-export const makeUseInquiry = method => (id, options = {}) => {
+const useInquiry = (id, options = {}) => {
   invariant(typeof id === 'string', 'First argument (id) is required');
-  const { client } = useClient();
+  const { restClient } = useRestClient();
   const [, setState] = useState();
   const { ignoreStateChange, noAutosend, ...sendOptions } = options;
-  const inquiryInstance = client.getInquiry(id, { ...sendOptions, method });
+  const inquiryInstance = restClient.getInquiry(id, sendOptions);
 
   function handleStateChange(nextState) {
     if (!ignoreStateChange) setState(nextState);
@@ -25,8 +25,4 @@ export const makeUseInquiry = method => (id, options = {}) => {
   return inquiryInstance;
 };
 
-export const useGetInquiry = makeUseInquiry('get');
-export const usePostInquiry = makeUseInquiry('post');
-export const useDeleteInquiry = makeUseInquiry('delete');
-export const usePutInquiry = makeUseInquiry('put');
-export const useOptionInquiry = makeUseInquiry('option');
+export default useInquiry;

@@ -59,16 +59,22 @@ class Inquiry {
 
     return fetch(url, fetchOptions)
       .then(response => {
-        if (!response.ok) {
+        if (response.ok) return response.json();
+        return response.text().then(details => {
           const error = new Error(response.statusText);
-          error.response = response;
+          error.code = response.status;
+          error.details = details;
           return Promise.reject(error);
-        }
-
-        return response.json();
+        });
       })
       .then(data => ({ data, error: null }))
-      .catch(error => ({ error }))
+      .catch(error => ({
+        error: {
+          code: error.code || 500,
+          message: error.message,
+          details: error.details || error.stack,
+        },
+      }))
       .then(results => {
         if (number === this.state.number) this.patchState({ ...results, isLoading: false });
       });

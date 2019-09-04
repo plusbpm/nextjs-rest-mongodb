@@ -3,7 +3,7 @@ import invariant from '../util/invariant';
 
 class RestClient {
   constructor(options) {
-    const { apiRoot, initialState } = options || {};
+    const { apiRoot, initialState = {} } = options || {};
     this.apiRoot = apiRoot || '';
     this.inquiries = {};
     this.initialState = initialState;
@@ -13,7 +13,6 @@ class RestClient {
   getInquiry = (id, sendOptions = {}) => {
     invariant(typeof id === 'string', "First argument 'id' is missing.");
     invariant(id.length > 0, "First argument 'id' is empty.");
-    invariant(sendOptions.method, "Option 'method' is missing.");
     const inquiry =
       this.inquiries[id] ||
       (this.inquiries[id] = new Inquiry(this, sendOptions, this.initialState[id]));

@@ -1,16 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import RestClient from './Client';
+import RestClient from './RestClient';
 import Context from './Context';
 
-const Provider = ({ children, client }) => (
-  <Context.Provider value={{ client }}>{children}</Context.Provider>
+const Provider = ({ children, restClient }) => (
+  <Context.Provider value={{ restClient }}>{children}</Context.Provider>
 );
 
 Provider.propTypes = {
   children: PropTypes.node,
-  client: PropTypes.instanceOf(RestClient).isRequired,
+  restClient: PropTypes.instanceOf(RestClient).isRequired,
 };
 
 Provider.defaultProps = {

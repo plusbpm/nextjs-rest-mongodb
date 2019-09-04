@@ -1,15 +1,14 @@
 import React from 'react';
 import Head from 'next/head';
 
-import { useGetInquiry } from '../src/client';
+import { useInquiry } from '../src/restClient';
 
 const Home = () => {
-  const inq = useGetInquiry('home', {
-    endpoint: '/api/test',
-    query: { asd: 2 },
-    // noAutosend: true,
+  const inq = useInquiry('home', {
+    endpoint: '/test',
+    noAutosend: true,
   });
-  const { canceled, data, error, isLoading, number } = inq.getState();
+  const { canceled, data, error, isLoading } = inq.getState();
   return (
     <div>
       <Head>
@@ -23,13 +22,11 @@ const Home = () => {
       <br />
       canceled: {JSON.stringify(canceled)}
       <br />
-      number: {JSON.stringify(number)}
-      <br />
       <br />
       <button type="button" onClick={() => inq.send()}>
         Send
       </button>
-      <button type="button" onClick={() => inq.send({ endpoint: '/api/test2', query: {} })}>
+      <button type="button" onClick={() => inq.send({ endpoint: '/test2', query: {} })}>
         Send2
       </button>
       <button type="button" onClick={() => inq.cancel()}>
@@ -37,6 +34,11 @@ const Home = () => {
       </button>
     </div>
   );
+};
+
+Home.getInitialProps = async ({ restClient }) => {
+  await restClient.getInquiry('home', { endpoint: '/test', query: { zxc: 1 } }).send();
+  return {};
 };
 
 export default Home;

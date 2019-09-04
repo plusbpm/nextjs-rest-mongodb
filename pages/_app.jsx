@@ -1,33 +1,28 @@
 import React from 'react';
 import App from 'next/app';
 
-import { createClient, Provider } from '../src/client';
-
-const apiRoot = process.env.API_ROOT;
+import { createClient, Provider } from '../src/restClient';
 
 export default class MyApp extends App {
   constructor(props) {
     super(props);
-    this.restClient = createClient({
-      apiRoot,
-      initialState: props.cacheData,
-    });
+    this.restClient = createClient({ initialState: props.cacheData });
   }
 
   static async getInitialProps({ Component, ctx }) {
-    const client = createClient({ apiRoot });
+    const restClient = createClient();
 
     const pageProps = Component.getInitialProps
-      ? await Component.getInitialProps({ ...ctx, client })
+      ? await Component.getInitialProps({ ...ctx, restClient })
       : {};
 
-    return { pageProps, cacheData: client.extractCacheData() };
+    return { pageProps, cacheData: restClient.extractCacheData() };
   }
 
   render() {
     const { Component, pageProps } = this.props;
     return (
-      <Provider client={this.restClient}>
+      <Provider restClient={this.restClient}>
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <Component {...pageProps} />
       </Provider>
