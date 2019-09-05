@@ -1,7 +1,12 @@
 import React from 'react';
-import App from 'next/app';
+import Head from 'next/head';
+import App, { Container } from 'next/app';
 
-import { createClient, Provider } from '../src/restClient';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import { ThemeProvider } from '@material-ui/styles';
+
+import { createClient, Provider as RestProvider } from '../src/restClient';
+import theme from '../src/material-ui/theme';
 
 export default class MyApp extends App {
   constructor(props) {
@@ -19,13 +24,27 @@ export default class MyApp extends App {
     return { pageProps, cachedData: restClient.getResults() };
   }
 
+  componentDidMount() {
+    const jssStyles = document.querySelector('#jss-server-side');
+    if (jssStyles) {
+      jssStyles.parentNode.removeChild(jssStyles);
+    }
+  }
+
   render() {
     const { Component, pageProps } = this.props;
     return (
-      <Provider restClient={this.restClient}>
-        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-        <Component {...pageProps} />
-      </Provider>
+      <Container>
+        <Head>
+          <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        </Head>
+        <RestProvider restClient={this.restClient}>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <Component {...pageProps} />
+          </ThemeProvider>
+        </RestProvider>
+      </Container>
     );
   }
 }

@@ -1,6 +1,8 @@
 import React from 'react';
 import Head from 'next/head';
 
+import Button from '@material-ui/core/Button';
+
 import { useInquiry } from '../src/restClient';
 
 const Home = () => {
@@ -23,15 +25,20 @@ const Home = () => {
       canceled: {JSON.stringify(canceled)}
       <br />
       <br />
-      <button type="button" onClick={() => homeInq.send()}>
-        Send
-      </button>
-      <button type="button" onClick={() => homeInq.send({ endpoint: '/test2', query: {} })}>
-        Send2
-      </button>
-      <button type="button" onClick={() => homeInq.cancel()}>
-        Cancel
-      </button>
+      <Button type="button" variant="contained" color="primary" onClick={() => homeInq.send()}>
+        Отправить
+      </Button>
+      <Button
+        type="button"
+        variant="contained"
+        color="primary"
+        onClick={() => homeInq.send({ endpoint: '/test2', query: {} })}
+      >
+        Отправить еще
+      </Button>
+      <Button type="button" variant="contained" color="primary" onClick={() => homeInq.cancel()}>
+        Отменить
+      </Button>
     </div>
   );
 };
