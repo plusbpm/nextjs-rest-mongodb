@@ -6,7 +6,7 @@ import { createClient, Provider } from '../src/restClient';
 export default class MyApp extends App {
   constructor(props) {
     super(props);
-    this.restClient = createClient({ initialState: props.cacheData });
+    this.restClient = createClient({ initialState: props.cachedData });
   }
 
   static async getInitialProps({ Component, ctx }) {
@@ -16,7 +16,7 @@ export default class MyApp extends App {
       ? await Component.getInitialProps({ ...ctx, restClient })
       : {};
 
-    return { pageProps, cacheData: restClient.extractCacheData() };
+    return { pageProps, cachedData: restClient.getResults() };
   }
 
   render() {

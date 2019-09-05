@@ -4,8 +4,9 @@ import Head from 'next/head';
 import { useInquiry } from '../src/restClient';
 
 const Home = () => {
-  const inq = useInquiry('home', { endpoint: '/test' });
-  const { canceled, data, error, isLoading } = inq.getState();
+  const homeInq = useInquiry('home');
+  const { canceled, data, error, isLoading } = homeInq.getState();
+
   return (
     <div>
       <Head>
@@ -22,13 +23,13 @@ const Home = () => {
       canceled: {JSON.stringify(canceled)}
       <br />
       <br />
-      <button type="button" onClick={() => inq.send()}>
+      <button type="button" onClick={() => homeInq.send()}>
         Send
       </button>
-      <button type="button" onClick={() => inq.send({ endpoint: '/test2', query: {} })}>
+      <button type="button" onClick={() => homeInq.send({ endpoint: '/test2', query: {} })}>
         Send2
       </button>
-      <button type="button" onClick={() => inq.cancel()}>
+      <button type="button" onClick={() => homeInq.cancel()}>
         Cancel
       </button>
     </div>

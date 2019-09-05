@@ -2,10 +2,9 @@ import { stringify } from 'query-string';
 import fetch from 'isomorphic-unfetch';
 
 class Inquiry {
-  constructor(client, options, initialState) {
+  constructor(client, options, { sendOptions, ...initialState } = {}) {
     this.client = client;
-    this.method = options.method;
-    this.options = options;
+    this.options = { ...sendOptions, ...options };
     this.state = {
       canceled: false,
       data: null,
@@ -24,8 +23,8 @@ class Inquiry {
   };
 
   getState = () => {
-    const { number, ...rest } = this.state;
-    return rest;
+    const { number, ...state } = this.state;
+    return { ...state, sendOptions: this.options };
   };
 
   patchState = patch => {
@@ -50,7 +49,6 @@ class Inquiry {
     const { endpoint, query, ...fetchOptions } = {
       ...this.options,
       ...options,
-      method: this.method,
       signal: this.getAbortSignal(),
     };
     const url = this.getUrl(endpoint, query);
