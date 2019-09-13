@@ -2,7 +2,7 @@ import lightBlue from '@material-ui/core/colors/lightBlue';
 import deepOrange from '@material-ui/core/colors/deepOrange';
 import green from '@material-ui/core/colors/green';
 
-export default theme => ({
+export default () => ({
   info: {
     backgroundColor: lightBlue[600],
   },

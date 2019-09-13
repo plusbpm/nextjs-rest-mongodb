@@ -7,6 +7,7 @@
     "analyze:server": "BUNDLE_ANALYZE=server next build",
     "analyze:browser": "BUNDLE_ANALYZE=browser next build",
     "dev": "touch .env; npx supervisor -n -t -w api,config,next.config.js,server.js server.js",
+    "predev": "docker run -d --rm -p27017:27017 mvertes/alpine-mongo || exit 0",
     "docker": "touch .env; cd docker; ./main.sh",
     "lint": "eslint api pages src --ext .js,.jsx"
   },
@@ -24,7 +25,8 @@
     "prop-types": "15.7.2",
     "query-string": "6.8.3",
     "react": "16.9.0",
-    "react-dom": "16.9.0"
+    "react-dom": "16.9.0",
+    "react-hook-form": "^3.23.5"
   },
   "devDependencies": {
     "@babel/plugin-proposal-export-default-from": "^7.5.2",

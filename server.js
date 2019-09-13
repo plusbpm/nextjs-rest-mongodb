@@ -20,7 +20,7 @@ async function start() {
   await mountApi(server);
 
   server.get('*', async ({ raw }, { res }) => nextHandle(raw, res));
-  await server.listen(port);
+  await server.listen(port, '0.0.0.0');
   // eslint-disable-next-line no-console
   console.log(`Ready on http://127.0.0.1:${port}`);
 }
