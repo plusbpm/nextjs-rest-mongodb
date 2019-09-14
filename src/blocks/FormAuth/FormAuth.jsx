@@ -7,7 +7,6 @@ import useForm from 'react-hook-form';
 
 import Card from '@material-ui/core/Card';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import CardActions from '@material-ui/core/CardActions';
 import Link from '@material-ui/core/Link';
 
@@ -15,19 +14,36 @@ import useStyles from './FormAuth.styles';
 import emailValidate from '../../util/emailValidate';
 import passwordValidate from '../../util/passwordValidate';
 import TextInput from '../TextInput';
+import ButtonWithSpinner from '../ButtonWithSpinner';
+import InqueriesErrorSnackbar from '../InqueriesErrorSnackbar';
 
-const FormAuth = ({ register }) => {
-  const { actions, card, mobileHeader } = useStyles();
-  const { errors, handleSubmit, register: registerField, getValues } = useForm({
+import { useInquery } from '../../restClient';
+
+const makeSubmitHandler = ({ register }, actionInquery, handleSubmit) =>
+  handleSubmit((data, event) => {
+    event.preventDefault();
+    actionInquery.send({
+      endpoint: `/api/${register ? 'register' : 'login'}`,
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  });
+
+const FormAuth = props => {
+  const { register } = props;
+
+  const { actions, card, mobileHeader, snackbar } = useStyles();
+  const validations = useForm({
     validationFields: ['email', 'password'].concat(register ? ['name', 'repeat'] : []),
   });
+  const actionInquery = useInquery(register ? 'register' : 'login');
+
+  const { errors, handleSubmit, register: registerInputValidation, getValues } = validations;
   const { name, email, password, repeat } = errors;
-
-  const onSubmit = handleSubmit((data, event) => {
-    event.preventDefault();
-    console.log('SUBMIT', data);
-  });
-
+  const onSubmit = makeSubmitHandler(props, actionInquery, handleSubmit);
   return (
     <Card component="form" raised className={card} onSubmit={onSubmit}>
       <Typography variant="h6" className={mobileHeader}>
@@ -40,7 +56,7 @@ const FormAuth = ({ register }) => {
           label="Name"
           name="name"
           autoComplete="name"
-          inputRef={registerField({
+          inputRef={registerInputValidation({
             required: 'Required field',
             minLength: { value: 3, message: 'Minimum 3 characters' },
             maxLength: { value: 50, message: 'Maximum 50 characters' },
@@ -54,7 +70,7 @@ const FormAuth = ({ register }) => {
         label="Email"
         name="email"
         autoComplete={register ? undefined : 'email'}
-        inputRef={registerField({
+        inputRef={registerInputValidation({
           required: 'Required field',
           validate: emailValidate,
         })}
@@ -66,7 +82,7 @@ const FormAuth = ({ register }) => {
         label="Password"
         type="password"
         name="password"
-        inputRef={registerField({
+        inputRef={registerInputValidation({
           required: 'Required field',
           validate: passwordValidate,
           minLength: { value: 6, message: 'Minimum 6 characters' },
@@ -80,7 +96,7 @@ const FormAuth = ({ register }) => {
           label="Repeat password"
           type="password"
           name="repeat"
-          inputRef={registerField({
+          inputRef={registerInputValidation({
             required: 'Required field',
             validate: repeatValue => repeatValue === getValues().password || 'Repeat not match',
           })}
@@ -89,15 +105,22 @@ const FormAuth = ({ register }) => {
         />
       )}
       <CardActions className={actions}>
-        <Button variant="contained" color="primary" size="large" type="submit">
+        <ButtonWithSpinner
+          variant="contained"
+          color="primary"
+          size="large"
+          type="submit"
+          busy={actionInquery.getState().isLoading}
+        >
           Submit
-        </Button>
+        </ButtonWithSpinner>
         <NextLink href={register ? '/' : '/?mode=register'} passHref>
           <Link underline="always" color="secondary">
             {register ? 'Login to exists account' : 'Register new account'}
           </Link>
         </NextLink>
       </CardActions>
+      <InqueriesErrorSnackbar global={false} className={snackbar} />
     </Card>
   );
 };

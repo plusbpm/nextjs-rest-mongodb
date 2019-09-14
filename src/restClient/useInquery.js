@@ -3,12 +3,12 @@ import { useState, useEffect } from 'react';
 import invariant from '../util/invariant';
 import useRestClient from './useRestClient';
 
-const useInquiry = (id, options = {}) => {
+const useInquery = (id, options = {}) => {
   invariant(typeof id === 'string', 'First argument (id) is required');
   const { restClient } = useRestClient();
   const [, setState] = useState();
   const { ignoreStateChange, autosend, ...sendOptions } = options;
-  const inquiryInstance = restClient.getInquiry(id, sendOptions);
+  const inquiryInstance = restClient.getInquery(id, sendOptions);
 
   function handleStateChange(nextState) {
     if (!ignoreStateChange) setState(nextState);
@@ -25,4 +25,4 @@ const useInquiry = (id, options = {}) => {
   return inquiryInstance;
 };
 
-export default useInquiry;
+export default useInquery;

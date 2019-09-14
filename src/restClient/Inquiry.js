@@ -44,7 +44,7 @@ class Inquiry {
   };
 
   send = options => {
-    const number = this.client.getNextInquiryNumber();
+    const number = this.client.getNextInqueryNumber();
     this.abort();
     const { endpoint, query, ...fetchOptions } = {
       ...this.options,
@@ -86,15 +86,16 @@ class Inquiry {
 
   cancel = () => {
     this.abort();
-    if (this.state.isLoading) {
-      this.patchState({
-        canceled: true,
-        error: new Error('Canceled'),
-        isLoading: false,
-        number: this.client.getNextInquiryNumber(),
-      });
-    }
+    if (!this.state.isLoading) return;
+    this.patchState({
+      canceled: true,
+      error: new Error('Canceled'),
+      isLoading: false,
+      number: this.client.getNextInqueryNumber(),
+    });
   };
+
+  cleanError = () => this.patchState({ error: null });
 
   onStateChange = handler => {
     const index = this.stateChangeHandlers.indexOf(handler);

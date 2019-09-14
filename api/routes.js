@@ -6,7 +6,7 @@ module.exports = (fastify, { mongodb }, done) => {
 
   fastify.all('/*', async (request, reply) => {
     reply.code(404);
-    return 'Неизвестный адрес в апи.';
+    return 'Unknown api endpoint.';
   });
 
   done();

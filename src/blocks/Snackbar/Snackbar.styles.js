@@ -1,8 +1,18 @@
+import { makeStyles } from '@material-ui/core/styles';
 import lightBlue from '@material-ui/core/colors/lightBlue';
 import deepOrange from '@material-ui/core/colors/deepOrange';
 import green from '@material-ui/core/colors/green';
 
-export default () => ({
+export default makeStyles({
+  initial: {
+    display: 'none',
+  },
+  open: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    flexWrap: 'nowrap',
+    alignItems: 'center',
+  },
   info: {
     backgroundColor: lightBlue[600],
   },

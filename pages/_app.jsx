@@ -20,8 +20,9 @@ export default class MyApp extends App {
     const pageProps = Component.getInitialProps
       ? await Component.getInitialProps({ ...ctx, restClient })
       : {};
+    const cachedData = restClient.getInqueriesMap({ results: true });
 
-    return { pageProps, cachedData: restClient.getResults() };
+    return { pageProps, cachedData };
   }
 
   componentDidMount() {
