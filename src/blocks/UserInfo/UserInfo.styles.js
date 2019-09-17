@@ -13,7 +13,7 @@ export default makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'start',
-    paddingBottom: `${theme.spacing(2)}px !important`,
+    padding: `${theme.spacing(2)}px !important`,
     '& > p': {
       maxWidth: theme.spacing(20),
     },
@@ -43,9 +43,11 @@ export default makeStyles(theme => ({
       flexWrap: 'wrap',
       alignItems: 'center',
       justifyContent: 'space-between',
+      padding: `${theme.spacing(1)}px !important`,
       '& > p': {
         marginRight: theme.spacing(2),
         maxWidth: 'unset',
+        fontSize: theme.typography.h6.fontSize,
       },
     },
     divider: {
