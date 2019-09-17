@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import clsx from 'clsx';
 
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
@@ -16,7 +17,7 @@ const useStyles = makeStyles(theme => ({
 function DefaultContainer({ children, ...rest }) {
   const { main } = useStyles();
   return (
-    <Container component="main" className={main} maxWidth="sm" {...rest}>
+    <Container component="main" className={clsx(main, rest.className)} maxWidth="sm" {...rest}>
       {children}
     </Container>
   );

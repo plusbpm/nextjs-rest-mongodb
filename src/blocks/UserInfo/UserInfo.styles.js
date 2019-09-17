@@ -1,4 +1,5 @@
 import { makeStyles } from '@material-ui/core/styles';
+import { LAYOUT_BREAKPOINT } from '../constants';
 
 export default makeStyles(theme => ({
   card: {
@@ -6,21 +7,33 @@ export default makeStyles(theme => ({
     position: 'fixed',
     top: 0,
     right: 0,
+    margin: theme.spacing(2),
   },
   content: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'start',
     paddingBottom: `${theme.spacing(2)}px !important`,
+    '& > p': {
+      maxWidth: theme.spacing(20),
+    },
   },
   divider: {
     alignSelf: 'stretch',
     margin: theme.spacing(2, -2),
   },
-  [theme.breakpoints.down('sm')]: {
+  logoutButton: {
+    flexShrink: 0,
+    '& svg': {
+      marginLeft: theme.spacing(2),
+    },
+  },
+  [theme.breakpoints.down(LAYOUT_BREAKPOINT)]: {
     card: {
+      position: 'sticky',
+      top: 0,
+      width: '100%',
       margin: 0,
-      left: 0,
       borderBottom: `1px solid ${theme.palette.divider}`,
       boxShadow: 'none',
       borderRadius: 0,
@@ -30,11 +43,9 @@ export default makeStyles(theme => ({
       flexWrap: 'wrap',
       alignItems: 'center',
       justifyContent: 'space-between',
-    },
-    texts: {
       '& > p': {
-        display: 'inline-block',
         marginRight: theme.spacing(2),
+        maxWidth: 'unset',
       },
     },
     divider: {
