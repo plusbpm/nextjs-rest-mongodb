@@ -8,7 +8,7 @@ export default makeStyles(theme => ({
     top: 0,
     right: 0,
     margin: theme.spacing(2),
-    zIndex: 10,
+    zIndex: theme.zIndex.appBar,
   },
   content: {
     display: 'flex',
