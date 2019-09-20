@@ -9,12 +9,12 @@ export default makeStyles(theme => ({
       marginBottom: theme.spacing(1),
     },
     fieldInput: {
-      fontSize: theme.typography.h5.fontSize,
+      fontSize: theme.typography.h6.fontSize,
       paddingLeft: theme.spacing(1),
       paddingRight: theme.spacing(1),
     },
     fieldLabel: {
-      fontSize: theme.typography.h5.fontSize,
+      fontSize: theme.typography.h6.fontSize,
       left: theme.spacing(1),
       top: theme.spacing(-0.5),
     },
