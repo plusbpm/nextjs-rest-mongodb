@@ -47,7 +47,6 @@ export default makeStyles(theme => ({
       '& > p': {
         marginRight: theme.spacing(2),
         maxWidth: 'unset',
-        fontSize: theme.typography.h6.fontSize,
       },
     },
     divider: {

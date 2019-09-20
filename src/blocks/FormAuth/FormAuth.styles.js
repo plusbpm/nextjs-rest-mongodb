@@ -25,7 +25,6 @@ export default makeStyles(theme => ({
       paddingRight: theme.spacing(1),
     },
     mobileHeader: {
-      fontSize: theme.typography.h5.fontSize,
       padding: theme.spacing(1, 1),
     },
     snackbar: {
