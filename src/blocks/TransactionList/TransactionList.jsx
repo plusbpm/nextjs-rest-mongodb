@@ -31,10 +31,10 @@ function TransactionList() {
         </ListSubheader>
       }
     >
-      {Range(0, 30).map(key => {
+      {Range(0, 10).map(key => {
         const isDebit = Boolean(key % 2);
         return (
-          <ListItem hover key={key} dense divider>
+          <ListItem key={key} dense divider>
             <Tooltip title={isDebit ? 'debit' : 'credit'}>
               <ListItemIcon>
                 {isDebit ? <TrendingUp color="primary" /> : <TrendingDown color="error" />}
