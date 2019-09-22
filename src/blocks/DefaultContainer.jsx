@@ -7,6 +7,7 @@ import Container from '@material-ui/core/Container';
 
 const useStyles = makeStyles(theme => ({
   main: {
+    minWidth: 230,
     padding: theme.spacing(3),
     [theme.breakpoints.down('xs')]: {
       padding: theme.spacing(3, 0, 0, 0),
