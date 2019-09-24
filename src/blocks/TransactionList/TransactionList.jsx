@@ -1,14 +1,13 @@
 import React from 'react';
 import Range from 'lodash/range';
 
+import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import ListSubheader from '@material-ui/core/ListSubheader';
-import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
 
 import Replay from '@material-ui/icons/Replay';
@@ -17,24 +16,15 @@ import TrendingUp from '@material-ui/icons/TrendingUp';
 
 import useStyles from './TransactionList.styles';
 
-function TransactionList() {
+function TransactionList(props) {
   const { list, text, secondaryAction } = useStyles();
   return (
-    <List
-      className={list}
-      subheader={
-        // eslint-disable-next-line react/jsx-wrap-multilines
-        <ListSubheader disableSticky>
-          <Typography variant="h6" gutterBottom color="textPrimary">
-            Transactions history
-          </Typography>
-        </ListSubheader>
-      }
-    >
+    <List className={list} {...props}>
+      <Divider />
       {Range(0, 10).map(key => {
         const isDebit = Boolean(key % 2);
         return (
-          <ListItem key={key} dense divider>
+          <ListItem key={key} dense divider className="item">
             <Tooltip title={isDebit ? 'debit' : 'credit'}>
               <ListItemIcon>
                 {isDebit ? <TrendingUp color="primary" /> : <TrendingDown color="error" />}

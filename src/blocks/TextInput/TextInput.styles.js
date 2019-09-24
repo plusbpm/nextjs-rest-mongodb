@@ -14,7 +14,6 @@ export default makeStyles(theme => ({
     },
     fieldLabel: {
       left: theme.spacing(1),
-      top: theme.spacing(-0.5),
     },
     fieldHelper: {
       paddingLeft: theme.spacing(1),
