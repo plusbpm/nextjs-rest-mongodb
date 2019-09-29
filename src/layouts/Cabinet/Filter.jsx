@@ -46,16 +46,19 @@ class Filter extends Component {
   };
 
   render() {
-    const { label, type } = this.props;
+    const { id, label, type, router, onPatch, onChange, ...rest } = this.props;
     return (
       <TextInput
         className="filterField"
         type={type}
         label={label}
         defaultValue={this.defaultValue}
-        onChange={this.handleChange}
-        inputProps={type === 'number' ? { step: 0.01 } : undefined}
+        inputProps={{
+          ...rest,
+          ...(type === 'number' ? { step: 0.01 } : undefined),
+        }}
         InputLabelProps={type === 'date' ? { shrink: true } : undefined}
+        onChange={this.handleChange}
       />
     );
   }
