@@ -41,4 +41,9 @@ const CabinetLayout = () => {
   );
 };
 
+CabinetLayout.getInitialProps = ({ query }) => {
+  console.log('CabinetLayout getInitialProps', query);
+  return {};
+};
+
 export default CabinetLayout;

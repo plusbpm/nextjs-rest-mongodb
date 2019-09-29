@@ -8,7 +8,7 @@ import TextInput from '../../blocks/TextInput';
 
 class Filter extends Component {
   componentDidMount() {
-    this.props.onChange(this.defaultValue);
+    this.props.onChange(this.paramName, this.defaultValue);
   }
 
   componentWillUnmount() {
@@ -16,18 +16,28 @@ class Filter extends Component {
   }
 
   get defaultValue() {
-    return get(this.props.router, ['query', this.paramName]);
+    const { router, type } = this.props;
+    const value = get(router, ['query', this.paramName]);
+    switch (type) {
+      case 'text':
+        return value;
+      case 'number':
+        return Number.isNaN(parseFloat(value)) ? null : value;
+      case 'date':
+        return Number.isNaN(new Date(value).getTime()) ? null : value;
+      default:
+        return null;
+    }
   }
 
   get paramName() {
-    const { id, prefix } = this.props;
-    return `${prefix}_${id}`;
+    return `filter_${this.props.id}`;
   }
 
   actToRoute = nextValue => {
-    const { pathname, query, push } = this.props.router;
-    push({ pathname, query: { ...query, [this.paramName]: nextValue } });
-    this.props.onChange(nextValue);
+    const { onChange, onPatch } = this.props;
+    onChange(this.paramName, nextValue);
+    onPatch({ [this.paramName]: nextValue });
   };
 
   handleChange = event => {
@@ -54,10 +64,10 @@ class Filter extends Component {
 Filter.propTypes = {
   id: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
-  prefix: PropTypes.string.isRequired,
   router: PropTypes.shape().isRequired,
   type: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
+  onPatch: PropTypes.func.isRequired,
 };
 
 export default withRouter(Filter);

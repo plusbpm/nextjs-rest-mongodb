@@ -17,9 +17,9 @@ export default class MyApp extends App {
   static async getInitialProps({ Component, ctx }) {
     const restClient = createClient();
 
-    const pageProps = Component.getInitialProps
-      ? await Component.getInitialProps({ ...ctx, restClient })
-      : {};
+    const pageProps =
+      (Component.getInitialProps && (await Component.getInitialProps({ ...ctx, restClient }))) ||
+      {};
     const cachedData = restClient.getInqueriesMap({ results: true });
 
     return { pageProps, cachedData };
