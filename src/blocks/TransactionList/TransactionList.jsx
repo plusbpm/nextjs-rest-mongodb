@@ -1,5 +1,6 @@
 import React from 'react';
 import Range from 'lodash/range';
+import Link from 'next/link';
 
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
@@ -24,7 +25,7 @@ function TransactionList(props) {
       {Range(0, 10).map(key => {
         const isDebit = Boolean(key % 2);
         return (
-          <ListItem key={key} dense divider className="item">
+          <ListItem dense divider className="item" key={key}>
             <Tooltip title={isDebit ? 'debit' : 'credit'}>
               <ListItemIcon>
                 {isDebit ? <TrendingUp color="primary" /> : <TrendingDown color="error" />}
@@ -35,13 +36,15 @@ function TransactionList(props) {
               primary={`Amount - ${key} PW; Saldo - ${500 - key}`}
               secondary={`Correspondent ${key}, 10:11 pm Jan 9, 2014`}
             />
-            <ListItemSecondaryAction className={secondaryAction}>
-              <Tooltip title="Repeat transaction">
-                <IconButton color="secondary">
-                  <Replay />
-                </IconButton>
-              </Tooltip>
-            </ListItemSecondaryAction>
+            <Link href="/cabinet/transaction">
+              <ListItemSecondaryAction className={secondaryAction}>
+                <Tooltip title="Repeat transaction">
+                  <IconButton color="secondary">
+                    <Replay />
+                  </IconButton>
+                </Tooltip>
+              </ListItemSecondaryAction>
+            </Link>
           </ListItem>
         );
       })}

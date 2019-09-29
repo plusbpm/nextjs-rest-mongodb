@@ -5,7 +5,7 @@ import Button from '@material-ui/core/Button';
 import Collapse from '@material-ui/core/Collapse';
 import clsx from 'clsx';
 
-import { pushQueryPatch } from './util';
+import { replaceQueryPatch } from './util';
 import useStyles from './QueryController.styles';
 
 function QueryController({ children, showLabel, hideLabel, ...rest }) {
@@ -13,7 +13,7 @@ function QueryController({ children, showLabel, hideLabel, ...rest }) {
   const [filledKeys, setFilledKeys] = useState([]);
   const { bage, wrap } = useStyles();
 
-  const onChange = (key, value) => {
+  const onValueChange = (key, value) => {
     if (value && !filledKeys.includes(key)) {
       setFilledKeys(keys => [...keys, key]);
     }
@@ -23,7 +23,11 @@ function QueryController({ children, showLabel, hideLabel, ...rest }) {
   };
 
   const cloneChildren = currentChildren =>
-    cloneElement(currentChildren, { ...currentChildren.props, onChange, onPatch: pushQueryPatch });
+    cloneElement(currentChildren, {
+      ...currentChildren.props,
+      onValueChange,
+      onQueryPatch: replaceQueryPatch,
+    });
 
   return (
     <div className={wrap}>

@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
 
 const paramKey = 'sort';
 
-const Sorting = ({ list, onChange, onPatch }) => {
+const Sorting = ({ list, onValueChange, onQueryPatch }) => {
   const [state, setState] = useState({ id: null, direction: null });
   const { container, icon, sortButton } = useStyles();
   const router = useRouter();
@@ -32,7 +32,7 @@ const Sorting = ({ list, onChange, onPatch }) => {
 
   const handleNextStateAndValue = (nextState, value) => {
     setState(nextState);
-    onChange(paramKey, value);
+    onValueChange(paramKey, value);
   };
 
   const makeHandleClick = nextID => event => {
@@ -47,7 +47,7 @@ const Sorting = ({ list, onChange, onPatch }) => {
     const value = nextDirection ? `${nextID}_${nextDirection}` : null;
     handleNextStateAndValue(nextState, value);
 
-    onPatch({ [paramKey]: value });
+    onQueryPatch({ [paramKey]: value });
   };
 
   const getIcon = currentId => {
@@ -91,13 +91,13 @@ Sorting.propTypes = {
       label: PropTypes.string.isRequired,
     }),
   ).isRequired,
-  onChange: PropTypes.func,
-  onPatch: PropTypes.func,
+  onValueChange: PropTypes.func,
+  onQueryPatch: PropTypes.func,
 };
 
 Sorting.defaultProps = {
-  onChange: () => {},
-  onPatch: () => {},
+  onValueChange: () => {},
+  onQueryPatch: () => {},
 };
 
 export default Sorting;
