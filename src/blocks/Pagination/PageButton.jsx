@@ -19,7 +19,6 @@ const PageButton = ({ currentPage, className, selectedPage, ...props }) => {
         title={currentPage}
         className={clsx(pageButton, className)}
         disabled={currentPage === selectedPage}
-        variant="outlined"
         {...props}
       >
         {currentPage}

@@ -5,6 +5,9 @@ const customTheme = {
     // MuiButtonBase: {
     //   disableRipple: true,
     // },
+    MuiButton: {
+      variant: 'outlined',
+    },
   },
 };
 

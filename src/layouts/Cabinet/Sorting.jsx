@@ -70,12 +70,7 @@ const Sorting = ({ list, onValueChange, onQueryPatch }) => {
   return (
     <Grid container className={container}>
       {list.map(({ id: currentId, label }) => (
-        <Button
-          key={currentId}
-          className={sortButton}
-          onClick={makeHandleClick(currentId)}
-          variant="outlined"
-        >
+        <Button key={currentId} className={sortButton} onClick={makeHandleClick(currentId)}>
           {label}
           {getIcon(currentId)}
         </Button>

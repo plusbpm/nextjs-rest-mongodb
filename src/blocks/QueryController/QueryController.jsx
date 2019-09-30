@@ -36,7 +36,6 @@ function QueryController({ children, showLabel, hideLabel, ...rest }) {
       </Collapse>
       <Button
         onClick={() => setOpen(!open)}
-        variant="outlined"
         size="small"
         className={clsx('switch-button', open && 'open')}
         color="secondary"
