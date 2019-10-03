@@ -19,7 +19,8 @@ class Inquiry {
   getUrl = (endpoint = '/', query) => {
     const queryString = stringify(query);
     const questionSign = /\?/.test(endpoint) || queryString.length === 0 ? '' : '?';
-    return `${this.client.apiRoot}${endpoint}${questionSign}${queryString}`;
+    const root = /^(https?)?:?\/\//.test(endpoint) ? '' : this.client.apiRoot;
+    return `${root}${endpoint}${questionSign}${queryString}`;
   };
 
   getState = () => {
