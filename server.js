@@ -1,4 +1,6 @@
+const path = require('path');
 const dotenv = require('dotenv-safe');
+const fastifyStatic = require('fastify-static');
 
 const { error } = dotenv.config({ allowEmptyValues: true });
 if (error) throw error;
@@ -12,12 +14,17 @@ const port = parseInt(process.env.PORT, 10);
 const dev = process.env.NODE_ENV !== 'production';
 
 async function start() {
-  const nextApp = next({ dev });
+  const nextApp = next({ dev, dir: './front-end' });
   const nextHandle = nextApp.getRequestHandler();
   await nextApp.prepare();
 
   const server = fastify();
   await mountApi(server);
+
+  await server.register(fastifyStatic, {
+    root: path.join(__dirname, 'static'),
+    prefix: '/static/',
+  });
 
   server.get('*', async ({ raw }, { res }) => nextHandle(raw, res));
   await server.listen(port, '0.0.0.0');

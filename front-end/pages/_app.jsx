@@ -5,8 +5,8 @@ import App from 'next/app';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider } from '@material-ui/styles';
 
-import { createClient, Provider as RestProvider } from '../src/restClient';
-import theme from '../src/material-ui/theme';
+import { createClient, Provider as RestProvider } from '../restClient';
+import theme from '../material-ui/theme';
 
 export default class MyApp extends App {
   constructor(props) {

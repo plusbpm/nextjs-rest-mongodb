@@ -23,7 +23,7 @@ const makeSubmitHandler = ({ register }, actionInquery, handleSubmit) =>
   handleSubmit((data, event) => {
     event.preventDefault();
     actionInquery.send({
-      endpoint: `/api/${register ? 'register' : 'login'}`,
+      endpoint: `/user/${register ? 'register' : 'login'}`,
       method: 'POST',
       body: JSON.stringify(data),
       headers: {

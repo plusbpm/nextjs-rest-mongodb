@@ -21,5 +21,6 @@ module.exports = enhance({
       reportFilename: '../analyze/client.html',
     },
   },
+  distDir: '../.next',
   webpack: config => merge(common, config),
 });

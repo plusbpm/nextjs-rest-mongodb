@@ -1,19 +1,12 @@
-const { MongoClient } = require('mongodb');
-
 const apiRoutes = require('./routes');
+const { init } = require('../db');
 
-const connectUrl = process.env.MONGODB_URL;
 const apiRoot = process.env.API_ROOT;
-const mongoClient = new MongoClient(connectUrl, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
 
-module.exports = async server => {
-  await mongoClient.connect();
-  const mongodb = mongoClient.db();
+module.exports = async fastify => {
+  const dbAdapter = await init();
 
-  server.register(apiRoutes, { prefix: apiRoot, mongodb });
+  fastify.decorate('db', dbAdapter);
 
-  return server;
+  await fastify.register(apiRoutes, { prefix: apiRoot });
 };
