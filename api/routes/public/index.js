@@ -1,5 +1,5 @@
-const user = require('./user');
+const authRoutes = require('./authorization');
 
 module.exports = async fastify => {
-  await fastify.register(user, { prefix: '/user' });
+  await fastify.register(authRoutes, { prefix: '/authorization' });
 };

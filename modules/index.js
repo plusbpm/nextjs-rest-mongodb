@@ -1,9 +1,9 @@
 const authorization = require('./authorization');
 const session = require('./session');
-const user = require('./user');
+const transaction = require('./transaction');
 
 module.exports = {
   authorization,
   session,
-  user,
+  transaction,
 };

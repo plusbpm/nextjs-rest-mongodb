@@ -9,6 +9,7 @@ const fastify = require('fastify');
 const next = require('next');
 
 const mountApi = require('./api');
+const { mongodb } = require('./db');
 
 const port = parseInt(process.env.PORT, 10);
 const dev = process.env.NODE_ENV !== 'production';
@@ -18,8 +19,10 @@ async function start() {
   const nextHandle = nextApp.getRequestHandler();
   await nextApp.prepare();
 
+  const dbAdapter = await mongodb.createAdapter();
+
   const server = fastify();
-  await mountApi(server);
+  await mountApi(server, { dbAdapter });
 
   await server.register(fastifyStatic, {
     root: path.join(__dirname, 'static'),

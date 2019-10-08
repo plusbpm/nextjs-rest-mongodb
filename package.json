@@ -6,7 +6,7 @@
     "analyze": "BUNDLE_ANALYZE=both next build",
     "analyze:server": "BUNDLE_ANALYZE=server next build",
     "analyze:browser": "BUNDLE_ANALYZE=browser next build",
-    "dev": "npx supervisor -n -t -w api,config,next.config.js,server.js server.js",
+    "dev": "npx supervisor -n -t -w api,config,db,modules,next.config.js,server.js server.js",
     "docker": "touch .env; cd docker; ./main.sh",
     "lint": "eslint api pages src --ext .js,.jsx",
     "mongo": "docker start nextjs-rest-mongodb || npm run mongoup",

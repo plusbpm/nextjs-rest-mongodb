@@ -1,11 +1,5 @@
-const MongoAdapter = require('./MongoAdapter');
+const mongodb = require('./mongodb');
 
-const connectUrl = process.env.MONGODB_URL;
-
-async function init() {
-  const adapter = new MongoAdapter(connectUrl);
-  await adapter.init();
-  return adapter;
-}
-
-module.exports = { init };
+module.exports = {
+  mongodb,
+};
