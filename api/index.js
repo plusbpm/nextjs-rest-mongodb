@@ -7,5 +7,10 @@ module.exports = async (fastify, { dbAdapter } = {}) => {
 
   fastify.decorate('dbAdapter', dbAdapter);
 
+  fastify.setErrorHandler(async (error, request, reply) => {
+    reply.code(error.statusCode || 500);
+    return error.message;
+  });
+
   await fastify.register(apiRoutes, { prefix: apiRoot });
 };

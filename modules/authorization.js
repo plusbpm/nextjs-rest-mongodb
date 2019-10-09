@@ -1,21 +1,51 @@
-const crypto = require('crypto');
-const config = require('../config/authorization');
+const { createPasswordHash, createRandomString } = require('../util');
 
-const wrongCredentialsMessage = 'Unknown login or password';
+const localParam = process.env.PASS_LOCAL_PARAM;
 
-async function authenticate(db, email, password) {
-  const user = await db.findUserByEmail(email);
-  if (!user) throw new Error(wrongCredentialsMessage);
-  const hash = crypto
-    .createHmac('sha256', `${user.email}_${config.salt}`)
-    .update(password)
-    .digest('hex');
-  const passwordDoc = await db.findPassword(hash);
-  if (!passwordDoc) throw new Error(wrongCredentialsMessage);
-  return user.id;
+async function register(db, inputData) {
+  const { name, email, password } = inputData;
+
+  const emailDoc = await db.emailFindByLabel(email);
+  if (emailDoc) {
+    const error = new Error('Email is already registered.');
+    error.statuCode = 400;
+    throw error;
+  }
+
+  const { insertedId } = await db.userInsert({ name, account: 500 });
+  const userId = insertedId.toString();
+
+  await db.emailUpsert(email, { userId });
+
+  const salt = createRandomString();
+  const hash = createPasswordHash(password, salt, localParam);
+  await db.passwordInsert(userId, { salt, hash });
+
+  return userId;
+}
+
+const throwAuthenticateError = () => {
+  const error = new Error('Unknown login or password');
+  error.statusCode = 400;
+  throw error;
+};
+
+async function authenticate(db, inputData) {
+  const { email, password } = inputData;
+
+  const emailDoc = await db.emailFindByLabel(email);
+  if (!emailDoc) throwAuthenticateError();
+
+  const passDoc = await db.passwordFindByUserId(emailDoc.userId);
+  if (!passDoc) throwAuthenticateError();
+
+  const hash = createPasswordHash(password, passDoc.salt, localParam);
+  if (hash !== passDoc.hash) throwAuthenticateError();
+
+  return passDoc.userId;
 }
 
 module.exports = {
   authenticate,
-  config,
+  register,
 };
