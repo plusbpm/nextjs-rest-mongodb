@@ -1,4 +1,4 @@
-const { authorization, session } = require('../../../modules');
+const { authorization, session } = require('../../modules');
 
 module.exports = async fastify => {
   // fastify.post('/register', async (request, reply) => {

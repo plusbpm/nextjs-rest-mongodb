@@ -1,8 +1,10 @@
-const publicRoutes = require('./public');
+const authRoutes = require('./authorization');
 // const privateRoutes = require('./private');
 
 module.exports = async fastify => {
-  await fastify.register(publicRoutes);
+  await fastify.register(authRoutes, { prefix: '/authorization' });
+
+  // await fastify.register(privateRoutes, { prefix: '/private' });
 
   fastify.all('/*', async (request, reply) => {
     reply.code(404);
