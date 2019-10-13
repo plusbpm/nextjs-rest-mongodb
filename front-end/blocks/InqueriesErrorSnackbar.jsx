@@ -7,7 +7,7 @@ import { useRestClient, useInqueriesMap } from '../restClient';
 const getErrorFunc = inquery => inquery.getState().error;
 
 const InqueriesErrorSnackbar = props => {
-  const { restClient } = useRestClient();
+  const restClient = useRestClient();
   const errorsMap = useInqueriesMap({ mapFunc: getErrorFunc });
 
   const messages = values(errorsMap)

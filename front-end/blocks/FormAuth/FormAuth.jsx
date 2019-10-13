@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 
 import { useRouter } from 'next/router';
@@ -17,6 +17,7 @@ import TextInput from '../TextInput';
 import ButtonWithSpinner from '../ButtonWithSpinner';
 import InqueriesErrorSnackbar from '../InqueriesErrorSnackbar';
 
+import { Context } from '../../appProvider';
 import { useInquery } from '../../restClient';
 
 const FormAuth = props => {
@@ -26,6 +27,7 @@ const FormAuth = props => {
   const validations = useForm({
     validationFields: ['email', 'password'].concat(register ? ['name', 'repeat'] : []),
   });
+  const { nextRoutingOccur } = useContext(Context);
   const actionInquery = useInquery(register ? 'register' : 'login');
   const router = useRouter();
 
@@ -115,7 +117,7 @@ const FormAuth = props => {
           color="primary"
           size="large"
           type="submit"
-          busy={actionInquery.getState().isLoading}
+          busy={actionInquery.getState().isLoading || nextRoutingOccur}
         >
           Submit
         </ButtonWithSpinner>

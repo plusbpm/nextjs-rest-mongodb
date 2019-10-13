@@ -5,7 +5,7 @@ import pick from 'lodash/pick';
 import useRestClient from './useRestClient';
 
 const useInqueriesMap = options => {
-  const { restClient } = useRestClient();
+  const restClient = useRestClient();
   const [udpatesCount, setUpdatesCount] = useState(0);
 
   function handleStateChange() {

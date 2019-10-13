@@ -5,7 +5,7 @@ import useRestClient from './useRestClient';
 
 const useInquery = (id, options = {}) => {
   invariant(typeof id === 'string', 'First argument (id) is required');
-  const { restClient } = useRestClient();
+  const restClient = useRestClient();
   const [, setState] = useState();
   const { ignoreStateChange, autosend, ...sendOptions } = options;
   const inquiryInstance = restClient.getInquery(id, sendOptions);

@@ -1,7 +1,8 @@
 import { useContext } from 'react';
 
-import Context from './Context';
+import { Context } from '../appProvider';
 
 export default function useRestClient() {
-  return useContext(Context);
+  const { restClient } = useContext(Context);
+  return restClient;
 }

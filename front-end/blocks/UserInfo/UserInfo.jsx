@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useRouter } from 'next/router';
 
 import Card from '@material-ui/core/Card';
@@ -10,11 +10,13 @@ import ExitToApp from '@material-ui/icons/ExitToApp';
 import ButtonWithSpinner from '../ButtonWithSpinner';
 import useStyles from './UserInfo.styles';
 
+import { Context } from '../../appProvider';
 import { useInquery } from '../../restClient';
 
 function UserInfo() {
   const { card, content, divider, logoutButton } = useStyles();
   const inquery = useInquery('logout', { endpoint: '/logout' });
+  const { nextRoutingOccur } = useContext(Context);
   const router = useRouter();
 
   const { isLoading } = inquery.getState();
@@ -33,7 +35,7 @@ function UserInfo() {
           variant="contained"
           color="primary"
           className={logoutButton}
-          busy={isLoading}
+          busy={isLoading || nextRoutingOccur}
           onClick={handleLogout}
         >
           Logout
