@@ -11,7 +11,9 @@
     "lint": "eslint api pages src --ext .js,.jsx",
     "mongo": "docker start nextjs-rest-mongodb || npm run mongoup",
     "mongoup": "docker run -d --rm -p27017:27017 -v /tmp/nextjs_dev_db/:/data/db/ --name nextjs-rest-mongodb mvertes/alpine-mongo; exit 0",
-    "predev": "cp -n .env.example .env; npm run mongo"
+    "predev": "cp -n .env.example .env; npm run mongo",
+    "prestart": "next build ./front-end",
+    "start": "NODE_ENV=production node server.js"
   },
   "dependencies": {
     "@material-ui/core": "^4.4.0",
