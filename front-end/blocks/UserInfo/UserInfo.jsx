@@ -1,4 +1,5 @@
 import React from 'react';
+import { useRouter } from 'next/router';
 
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -9,8 +10,18 @@ import ExitToApp from '@material-ui/icons/ExitToApp';
 import ButtonWithSpinner from '../ButtonWithSpinner';
 import useStyles from './UserInfo.styles';
 
+import { useInquery } from '../../restClient';
+
 function UserInfo() {
   const { card, content, divider, logoutButton } = useStyles();
+  const inquery = useInquery('logout', { endpoint: '/logout' });
+  const router = useRouter();
+
+  const { isLoading } = inquery.getState();
+
+  const handleLogout = () => {
+    inquery.send().then(() => router.push('/'));
+  };
 
   return (
     <Card component="figure" className={card}>
@@ -18,7 +29,13 @@ function UserInfo() {
         <Typography noWrap>Name</Typography>
         <Typography noWrap>Account: 500</Typography>
         <Divider className={divider} />
-        <ButtonWithSpinner variant="contained" color="primary" className={logoutButton}>
+        <ButtonWithSpinner
+          variant="contained"
+          color="primary"
+          className={logoutButton}
+          busy={isLoading}
+          onClick={handleLogout}
+        >
           Logout
           <ExitToApp />
         </ButtonWithSpinner>

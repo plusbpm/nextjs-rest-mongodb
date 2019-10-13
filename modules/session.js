@@ -6,11 +6,18 @@ const cookieName = process.env.SESSION_COOKIE_NAME;
 async function create(db, sessionData = {}) {
   const sessionId = createRandomString(16);
   await db.sessionInsert(sessionId, sessionData);
+  // https://github.com/fastify/fastify-cookie#sending
+  return [cookieName, sessionId, { maxAge: cookieMaxAge, httpOnly: true, sameSite: 'lax' }];
+}
 
-  // TOOD: make more flexible settings for cookies
-  return `${cookieName}=${sessionId}; HttpOnly; SameSite=Lax; Max-Age=${cookieMaxAge}; Path=/`;
+async function destroy(db, sessionId) {
+  await db.sessionRemove(sessionId);
+  // https://github.com/fastify/fastify-cookie#clearing
+  return [cookieName, {}];
 }
 
 module.exports = {
+  cookieName,
   create,
+  destroy,
 };

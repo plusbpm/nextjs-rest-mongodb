@@ -2,14 +2,21 @@ const { authorization, session } = require('../../modules');
 
 module.exports = async fastify => {
   fastify.post('/register', async request => {
-    const userId = await authorization.register(fastify.dbAdapter, request.body);
-    return { userId };
+    await authorization.register(fastify.dbAdapter, request.body);
+    return null;
   });
 
   fastify.post('/login', async (request, reply) => {
     const userId = await authorization.authenticate(fastify.dbAdapter, request.body);
-    const cookieValue = await session.create(fastify.dbAdapter, { userId });
-    reply.header('Set-Cookie', cookieValue);
+    const setCookieArgs = await session.create(fastify.dbAdapter, { userId });
+    reply.setCookie(...setCookieArgs);
     return { userId };
+  });
+
+  fastify.get('/logout', async (request, reply) => {
+    const sessionId = request.cookies[session.cookieName];
+    const clearCookieArgs = await session.destroy(fastify.dbAdapter, sessionId);
+    reply.clearCookie(...clearCookieArgs);
+    return null;
   });
 };

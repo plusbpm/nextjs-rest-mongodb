@@ -1,6 +1,7 @@
 const path = require('path');
 const dotenv = require('dotenv-safe');
 const fastifyStatic = require('fastify-static');
+const fastifyCookie = require('fastify-cookie');
 
 const { error } = dotenv.config({ allowEmptyValues: true });
 if (error) throw error;
@@ -22,6 +23,9 @@ async function start() {
   const dbAdapter = await mongodb.createAdapter();
 
   const server = fastify();
+
+  server.register(fastifyCookie);
+
   await mountApi(server, { dbAdapter });
 
   await server.register(fastifyStatic, {

@@ -25,7 +25,7 @@ export default makeStyles(theme => ({
   },
   logoutButton: {
     flexShrink: 0,
-    '& svg': {
+    '& > svg': {
       marginLeft: theme.spacing(2),
     },
   },

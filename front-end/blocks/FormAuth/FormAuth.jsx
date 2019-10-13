@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { withRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import NextLink from 'next/link';
 import useForm from 'react-hook-form';
 
@@ -19,19 +19,6 @@ import InqueriesErrorSnackbar from '../InqueriesErrorSnackbar';
 
 import { useInquery } from '../../restClient';
 
-const makeSubmitHandler = ({ register }, actionInquery, handleSubmit) =>
-  handleSubmit((data, event) => {
-    event.preventDefault();
-    actionInquery.send({
-      endpoint: `/authorization/${register ? 'register' : 'login'}`,
-      method: 'POST',
-      body: JSON.stringify(data),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  });
-
 const FormAuth = props => {
   const { register } = props;
 
@@ -40,10 +27,28 @@ const FormAuth = props => {
     validationFields: ['email', 'password'].concat(register ? ['name', 'repeat'] : []),
   });
   const actionInquery = useInquery(register ? 'register' : 'login');
+  const router = useRouter();
 
   const { errors, handleSubmit, register: registerInputValidation, getValues } = validations;
   const { name, email, password, repeat } = errors;
-  const onSubmit = makeSubmitHandler(props, actionInquery, handleSubmit);
+
+  const onSubmit = handleSubmit((data, event) => {
+    event.preventDefault();
+    actionInquery
+      .send({
+        endpoint: `/${register ? 'register' : 'login'}`,
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(() => {
+        const { error } = actionInquery.getState();
+        if (error) return;
+        router.push(register ? '/' : '/cabinet');
+      });
+  });
   return (
     <Card component="form" raised className={card} onSubmit={onSubmit}>
       <Typography variant="h6" className={mobileHeader}>
@@ -133,4 +138,4 @@ FormAuth.defaultProps = {
   register: false,
 };
 
-export default withRouter(FormAuth);
+export default FormAuth;

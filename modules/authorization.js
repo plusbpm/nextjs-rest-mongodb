@@ -8,7 +8,7 @@ async function register(db, inputData) {
   const emailDoc = await db.emailFindByLabel(email);
   if (emailDoc) {
     const error = new Error('Email is already registered.');
-    error.statuCode = 400;
+    error.statusCode = 400;
     throw error;
   }
 
@@ -41,6 +41,9 @@ async function authenticate(db, inputData) {
 
   const hash = createPasswordHash(password, passDoc.salt, localParam);
   if (hash !== passDoc.hash) throwAuthenticateError();
+
+  const userDoc = await db.passwordFindByUserId(emailDoc.userId);
+  if (!userDoc) throw new Error('Inconsistent database state');
 
   return passDoc.userId;
 }

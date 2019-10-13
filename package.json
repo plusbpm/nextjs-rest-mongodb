@@ -20,12 +20,13 @@
     "clsx": "^1.0.4",
     "dotenv-safe": "8.1.0",
     "fastify": "2.7.1",
+    "fastify-cookie": "^3.1.0",
     "fastify-static": "^2.5.0",
     "isomorphic-unfetch": "3.0.0",
     "jss": "^9.8.7",
     "lodash": "4.17.15",
     "mongodb": "^3.3.2",
-    "next": "9.0.5",
+    "next": "9.1.1",
     "prop-types": "15.7.2",
     "query-string": "6.8.3",
     "react": "16.9.0",
@@ -44,8 +45,11 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-react": "^7.14.3",
-    "eslint-plugin-react-hooks": "^2.0.1",
+    "eslint-plugin-react-hooks": "^2.1.2",
     "prettier": "^1.18.2",
     "supervisor": "^0.12.0"
-  }
+  },
+  "description": "Starter kit for using nextjs, rest client and mongodb",
+  "license": "MIT",
+  "repository": "git@gitlab.com:plusbpm/nextjs-rest-mongodb.git"
 }

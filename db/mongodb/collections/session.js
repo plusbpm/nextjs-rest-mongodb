@@ -3,6 +3,12 @@ async function insert(collection, sessionId, data) {
   return result;
 }
 
+async function remove(collection, sessionId) {
+  const result = await collection.deleteOne({ _id: sessionId });
+  return result;
+}
+
 module.exports = {
   insert,
+  remove,
 };
