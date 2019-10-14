@@ -17,7 +17,11 @@ export default class MyApp extends App {
   }
 
   static async getInitialProps({ Component, ctx }) {
-    const restClient = createClient();
+    const { cookie } = ctx.req ? ctx.req.headers : {};
+    const restClient = createClient({ globalSendOptions: { headers: { cookie } } });
+
+    const userInquery = restClient.getInquery('user', { endpoint: '/user' });
+    if (!userInquery.get('data')) await userInquery.send();
 
     const pageProps =
       (Component.getInitialProps && (await Component.getInitialProps({ ...ctx, restClient }))) ||

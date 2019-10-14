@@ -16,13 +16,18 @@ import { useInquery } from '../../restClient';
 function UserInfo() {
   const { card, content, divider, logoutButton } = useStyles();
   const inquery = useInquery('logout', { endpoint: '/logout' });
+  const userInquery = useInquery('user');
   const { nextRoutingOccur } = useContext(Context);
   const router = useRouter();
 
   const { isLoading } = inquery.getState();
 
   const handleLogout = () => {
-    inquery.send().then(() => router.push('/'));
+    inquery.send().then(() => {
+      if (inquery.get('error')) return;
+      userInquery.reset();
+      router.push('/');
+    });
   };
 
   return (

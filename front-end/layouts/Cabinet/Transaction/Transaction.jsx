@@ -2,12 +2,13 @@ import React from 'react';
 
 import { makeStyles } from '@material-ui/core/styles';
 
-import DefaultContainer from '../../blocks/DefaultContainer';
-import UserInfo from '../../blocks/UserInfo';
-import TransactionForm from '../../blocks/TransactionForm';
-import InqueriesErrorSnackbar from '../../blocks/InqueriesErrorSnackbar';
+import DefaultContainer from '../../../blocks/DefaultContainer';
+import UserInfo from '../../../blocks/UserInfo';
+import TransactionForm from '../../../blocks/TransactionForm';
+import InqueriesErrorSnackbar from '../../../blocks/InqueriesErrorSnackbar';
 
-import { LAYOUT_BREAKPOINT } from '../../blocks/constants';
+import { LAYOUT_BREAKPOINT } from '../../../blocks/constants';
+import redirectWith from '../../redirectWith';
 
 const useStyles = makeStyles(theme => ({
   transaction: {
@@ -36,8 +37,8 @@ const Transaction = () => {
   );
 };
 
-Transaction.getInitialProps = () => {
-  return {};
+Transaction.getInitialProps = async ctx => {
+  redirectWith(ctx, '/', userId => !userId);
 };
 
 export default Transaction;

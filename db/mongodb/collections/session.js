@@ -8,7 +8,13 @@ async function remove(collection, sessionId) {
   return result;
 }
 
+async function findById(collection, sessionId) {
+  const result = await collection.findOne({ _id: sessionId });
+  return result;
+}
+
 module.exports = {
   insert,
   remove,
+  findById,
 };

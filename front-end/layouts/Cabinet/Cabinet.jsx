@@ -10,6 +10,7 @@ import Pagination from '../../blocks/Pagination';
 import { LAYOUT_BREAKPOINT } from '../../blocks/constants';
 
 import Subheader from './Subheader';
+import redirectWith from '../redirectWith';
 
 const useStyles = makeStyles(theme => ({
   cabinet: {
@@ -41,8 +42,8 @@ const CabinetLayout = () => {
   );
 };
 
-CabinetLayout.getInitialProps = () => {
-  return {};
+CabinetLayout.getInitialProps = async ctx => {
+  redirectWith(ctx, '/', userId => !userId);
 };
 
 export default CabinetLayout;

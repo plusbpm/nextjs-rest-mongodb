@@ -1,5 +1,6 @@
 import { stringify } from 'query-string';
 import fetch from 'isomorphic-unfetch';
+import get from 'lodash/get';
 
 class Inquiry {
   constructor(client, options, { sendOptions, ...initialState } = {}) {
@@ -28,10 +29,22 @@ class Inquiry {
     return { ...state, sendOptions: this.options };
   };
 
+  reset = () => {
+    this.abort();
+    this.patchState({
+      canceled: false,
+      data: null,
+      error: null,
+      isLoading: false,
+    });
+  };
+
   patchState = patch => {
     this.state = { ...this.state, ...patch };
     this.stateChangeHandlers.forEach(handler => handler(this.state));
   };
+
+  get = (path, defaultValue) => get(this.getState(), path, defaultValue);
 
   getAbortSignal = () => {
     if (typeof AbortController === 'undefined') return undefined;

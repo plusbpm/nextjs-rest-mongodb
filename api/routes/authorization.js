@@ -10,7 +10,7 @@ module.exports = async fastify => {
     const userId = await authorization.authenticate(fastify.dbAdapter, request.body);
     const setCookieArgs = await session.create(fastify.dbAdapter, { userId });
     reply.setCookie(...setCookieArgs);
-    return { userId };
+    return null;
   });
 
   fastify.get('/logout', async (request, reply) => {

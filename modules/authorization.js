@@ -42,7 +42,7 @@ async function authenticate(db, inputData) {
   const hash = createPasswordHash(password, passDoc.salt, localParam);
   if (hash !== passDoc.hash) throwAuthenticateError();
 
-  const userDoc = await db.passwordFindByUserId(emailDoc.userId);
+  const userDoc = await db.userFindById(emailDoc.userId);
   if (!userDoc) throw new Error('Inconsistent database state');
 
   return passDoc.userId;
