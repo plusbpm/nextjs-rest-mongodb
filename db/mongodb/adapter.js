@@ -2,6 +2,7 @@ const { MongoClient } = require('mongodb');
 const upperFirst = require('lodash/upperFirst');
 
 const collections = require('./collections');
+const indexes = require('./indexes');
 
 class MongoAdapter {
   constructor(connectUrl, options) {
@@ -20,9 +21,7 @@ class MongoAdapter {
   attachMethod(collectionName, methodName, method) {
     const attachMethodName = `${collectionName}${upperFirst(methodName)}`;
     this[attachMethodName] = async (...args) => {
-      if (!this.inited) {
-        await this.init();
-      }
+      if (!this.inited) await this.init();
       const collection = this.db.collection(collectionName);
       return method(collection, ...args);
     };
@@ -32,6 +31,16 @@ class MongoAdapter {
     await this.mongoClient.connect();
     this.db = this.mongoClient.db();
     this.inited = true;
+  }
+
+  async createIndexes() {
+    if (!this.inited) await this.init();
+    return Promise.all(
+      Object.keys(indexes).map(collectionName => {
+        const collection = this.db.collection(collectionName);
+        return collection.createIndexes(indexes[collectionName]);
+      }),
+    );
   }
 }
 
