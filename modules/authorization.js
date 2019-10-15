@@ -1,8 +1,9 @@
 const { createPasswordHash, createRandomString } = require('../util');
 
 const localParam = process.env.PASS_LOCAL_PARAM;
+const startAccount = parseInt(process.env.ACCOUNT_START_VALUE, 10);
 
-async function register(db, inputData) {
+async function register(db, inputData, account = startAccount) {
   const { name, email, password } = inputData;
 
   const emailDoc = await db.emailFindByLabel(email);
@@ -12,7 +13,7 @@ async function register(db, inputData) {
     throw error;
   }
 
-  const { insertedId } = await db.userInsert({ name, account: 500 });
+  const { insertedId } = await db.userInsert({ name, account });
   const userId = insertedId.toString();
 
   await db.emailUpsert(email, { userId });

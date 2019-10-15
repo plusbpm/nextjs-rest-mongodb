@@ -3,6 +3,7 @@ const upperFirst = require('lodash/upperFirst');
 
 const collections = require('./collections');
 const indexes = require('./indexes');
+const mocking = require('./mocking');
 
 class MongoAdapter {
   constructor(connectUrl, options) {
@@ -41,6 +42,11 @@ class MongoAdapter {
         return collection.createIndexes(indexes[collectionName]);
       }),
     );
+  }
+
+  async mocking() {
+    if (!this.inited) await this.init();
+    await mocking(this);
   }
 }
 

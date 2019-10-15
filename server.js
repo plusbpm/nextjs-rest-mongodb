@@ -14,6 +14,7 @@ const { mongodb } = require('./db');
 
 const port = parseInt(process.env.PORT, 10);
 const dev = process.env.NODE_ENV !== 'production';
+const mockingEnabled = process.env.CREATE_MOCK_DATA === 'true';
 
 async function start() {
   const nextApp = next({ dev, dir: './front-end' });
@@ -21,6 +22,8 @@ async function start() {
   await nextApp.prepare();
 
   const dbAdapter = await mongodb.createAdapter();
+
+  if (mockingEnabled) await dbAdapter.mocking();
 
   const server = fastify();
 
