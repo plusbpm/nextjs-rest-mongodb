@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { useRouter } from 'next/router';
 
 import Card from '@material-ui/core/Card';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import { Divider } from '@material-ui/core';
@@ -15,16 +16,16 @@ import { useInquery } from '../../restClient';
 
 function UserInfo() {
   const { card, content, divider, logoutButton } = useStyles();
-  const inquery = useInquery('logout', { endpoint: '/logout' });
+  const logoutInquery = useInquery('logout', { endpoint: '/logout' });
   const userInquery = useInquery('user');
   const { nextRoutingOccur } = useContext(Context);
   const router = useRouter();
 
-  const { isLoading } = inquery.getState();
+  const isLoading = logoutInquery.get('isLoading');
 
   const handleLogout = () => {
-    inquery.send().then(() => {
-      if (inquery.get('error')) return;
+    logoutInquery.send().then(() => {
+      if (logoutInquery.get('error')) return;
       userInquery.reset();
       router.push('/');
     });
@@ -33,8 +34,8 @@ function UserInfo() {
   return (
     <Card component="figure" className={card}>
       <CardContent className={content}>
-        <Typography noWrap>Name</Typography>
-        <Typography noWrap>Account: 500</Typography>
+        <Typography noWrap>{userInquery.get('data.name')}</Typography>
+        <Typography noWrap>Account: {userInquery.get('data.account')}</Typography>
         <Divider className={divider} />
         <ButtonWithSpinner
           variant="contained"
