@@ -1,8 +1,16 @@
+const { session } = require('../../modules');
+
 const authRoutes = require('./authorization');
 const userRoutes = require('./user');
 const privateRoutes = require('./private');
 
 module.exports = async fastify => {
+  fastify.addHook('preHandler', async request => {
+    const sessionId = request.cookies[session.cookieName];
+    if (!sessionId) return;
+    await session.touch(fastify.dbAdapter, sessionId);
+  });
+
   await fastify.register(authRoutes);
 
   await fastify.register(userRoutes);

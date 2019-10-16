@@ -1,5 +1,16 @@
-// const authRoutes = require('./authorization');
+const { session } = require('../../../modules');
+
+const throwForbidden = () => {
+  const error = new Error('Fobidden');
+  error.statusCode = 403;
+  throw error;
+};
 
 module.exports = async fastify => {
-  // await fastify.register(privateRoutes, { prefix: '/private' });
+  fastify.addHook('preHandler', async request => {
+    const sessionId = request.cookies[session.cookieName];
+    if (!sessionId) throwForbidden();
+    const sessionDoc = await session.find(fastify.dbAdapter, sessionId);
+    if (!sessionDoc) throwForbidden();
+  });
 };
