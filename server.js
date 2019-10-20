@@ -11,6 +11,7 @@ const next = require('next');
 
 const mountApi = require('./api');
 const { mongodb } = require('./db');
+const createValidation = require('./validation');
 
 const port = parseInt(process.env.PORT, 10);
 const dev = process.env.NODE_ENV !== 'production';
@@ -21,6 +22,7 @@ async function start() {
   const nextHandle = nextApp.getRequestHandler();
   await nextApp.prepare();
 
+  const validation = createValidation();
   const dbAdapter = await mongodb.createAdapter();
 
   if (mockingEnabled) await dbAdapter.mocking();
@@ -29,7 +31,7 @@ async function start() {
 
   server.register(fastifyCookie);
 
-  await mountApi(server, { dbAdapter });
+  await mountApi(server, { dbAdapter, validation });
 
   await server.register(fastifyStatic, {
     root: path.join(__dirname, 'static'),

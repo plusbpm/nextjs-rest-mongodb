@@ -6,7 +6,7 @@
     "analyze": "BUNDLE_ANALYZE=both next build",
     "analyze:server": "BUNDLE_ANALYZE=server next build",
     "analyze:browser": "BUNDLE_ANALYZE=browser next build",
-    "dev": "npx supervisor -n -t -w api,config,db,modules,next.config.js,server.js server.js",
+    "dev": "npx supervisor -n -t -w api,config,db,modules,validation,next.config.js,server.js server.js",
     "docker": "touch .env; cd docker; ./main.sh",
     "lint": "eslint api pages src --ext .js,.jsx",
     "mongo": "docker start nextjs-rest-mongodb || npm run mongoup",
@@ -19,11 +19,13 @@
     "@material-ui/core": "^4.4.0",
     "@material-ui/icons": "^4.2.1",
     "@material-ui/styles": "^4.3.3",
+    "ajv": "^6.10.2",
     "clsx": "^1.0.4",
     "dotenv-safe": "8.1.0",
     "fastify": "2.7.1",
     "fastify-cookie": "^3.1.0",
     "fastify-static": "^2.5.0",
+    "get-form-data": "^2.0.0",
     "isomorphic-unfetch": "3.0.0",
     "jss": "^9.8.7",
     "lodash": "4.17.15",
@@ -32,8 +34,7 @@
     "prop-types": "15.7.2",
     "query-string": "6.8.3",
     "react": "16.9.0",
-    "react-dom": "16.9.0",
-    "react-hook-form": "^3.23.5"
+    "react-dom": "16.9.0"
   },
   "devDependencies": {
     "@babel/plugin-proposal-export-default-from": "^7.5.2",
