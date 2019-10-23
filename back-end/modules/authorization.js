@@ -1,4 +1,14 @@
-const { createPasswordHash, createRandomString } = require('../util');
+const crypto = require('crypto');
+
+const { createRandomString } = require('../util');
+
+const createPasswordHash = (password, salt, localParam = '') => {
+  const hash = crypto
+    .createHmac('sha256', `${salt}_${localParam}`)
+    .update(password)
+    .digest('hex');
+  return hash;
+};
 
 const localParam = process.env.PASS_LOCAL_PARAM;
 const startAccount = parseInt(process.env.ACCOUNT_START_VALUE, 10);

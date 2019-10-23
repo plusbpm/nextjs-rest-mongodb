@@ -18,9 +18,9 @@ import { Context } from '../../appProvider';
 import { useInquery } from '../../restClient';
 import useFormValidation from '../useFormValidation';
 
-import createValidation from '../../../validation';
-import registerSchemas from '../../../validation/forms/register';
-import loginSchemas from '../../../validation/forms/login';
+import createValidation from '../../../shared/validation';
+import registerSchemas from '../../../shared/validation/forms/register';
+import loginSchemas from '../../../shared/validation/forms/login';
 
 const validation = createValidation({ schemas: [...registerSchemas, ...loginSchemas] });
 

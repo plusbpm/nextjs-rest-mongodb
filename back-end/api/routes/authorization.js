@@ -1,7 +1,7 @@
 const { authorization, session } = require('../../modules');
 
-const loginSchemas = require('../../validation/forms/login');
-const registerSchemas = require('../../validation/forms/register');
+const loginSchemas = require('../../../shared/validation/forms/login');
+const registerSchemas = require('../../../shared/validation/forms/register');
 
 module.exports = async fastify => {
   fastify.validation.addSchemas([...registerSchemas, ...loginSchemas]);

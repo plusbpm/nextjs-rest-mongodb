@@ -1,10 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
-
 const withBundleAnalyzer = require('@zeit/next-bundle-analyzer');
-const merge = require('webpack-merge');
 const flow = require('lodash/flow');
 
-const common = require('./config/webpack.js');
+const handleWebpackConfig = require('./config/webpack.js');
 
 const enhance = flow(withBundleAnalyzer);
 
@@ -22,5 +20,5 @@ module.exports = enhance({
     },
   },
   distDir: '../.next',
-  webpack: config => merge(common, config),
+  webpack: handleWebpackConfig,
 });

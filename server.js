@@ -9,9 +9,9 @@ if (error) throw error;
 const fastify = require('fastify');
 const next = require('next');
 
-const mountApi = require('./api');
-const { mongodb } = require('./db');
-const createValidation = require('./validation');
+const mountApi = require('./back-end/api');
+const { mongodb } = require('./back-end/db');
+const createValidation = require('./shared/validation');
 
 const port = parseInt(process.env.PORT, 10);
 const dev = process.env.NODE_ENV !== 'production';

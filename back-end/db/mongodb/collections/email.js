@@ -1,5 +1,11 @@
+const flow = require('lodash/flow');
+const toLower = require('lodash/toLower');
+const deburr = require('lodash/deburr');
+const trim = require('lodash/trim');
+
 const { convertToObjectId } = require('../util');
-const { prepareEmailLabel } = require('../../../util');
+
+const prepareEmailLabel = flow([trim, deburr, toLower]);
 
 async function findByLabel(collection, label) {
   const emailDoc = await collection.findOne({ label: prepareEmailLabel(label) });
