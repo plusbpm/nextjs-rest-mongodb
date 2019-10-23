@@ -36,7 +36,8 @@
     "prop-types": "15.7.2",
     "query-string": "6.8.3",
     "react": "16.9.0",
-    "react-dom": "16.9.0"
+    "react-dom": "16.9.0",
+    "xss": "^1.0.6"
   },
   "devDependencies": {
     "@babel/plugin-proposal-export-default-from": "^7.5.2",

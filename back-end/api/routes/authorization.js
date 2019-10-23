@@ -1,10 +1,17 @@
+const get = require('lodash/get');
 const { authorization, session } = require('../../modules');
+const { xssProtect } = require('../../util');
 
 const loginSchemas = require('../../../shared/validation/forms/login');
 const registerSchemas = require('../../../shared/validation/forms/register');
 
 module.exports = async fastify => {
   fastify.validation.addSchemas([...registerSchemas, ...loginSchemas]);
+
+  fastify.addHook('preHandler', async request => {
+    const name = get(request, 'body.name');
+    if (name) request.body.name = xssProtect(name);
+  });
 
   fastify.post('/register', { schema: { body: { $ref: 'form_register' } } }, async request => {
     await authorization.register(fastify.dbAdapter, request.body);
