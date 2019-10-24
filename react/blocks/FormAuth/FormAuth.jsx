@@ -46,9 +46,9 @@ const FormAuth = props => {
   const { actions, card, mobileHeader, snackbar } = useStyles();
   const actionInquery = useInquery(register ? 'register' : 'login');
   const router = useRouter();
-  const validate = validation.getSchema(register ? 'form_register' : 'form_login');
+
   const [formProps, errors] = useFormValidation({
-    validate,
+    validate: validation.getSchema(register ? 'form_register' : 'form_login'),
     submit: makeSubmitHandler(props, actionInquery, router),
   });
   const { nextRoutingOccur } = useContext(Context);

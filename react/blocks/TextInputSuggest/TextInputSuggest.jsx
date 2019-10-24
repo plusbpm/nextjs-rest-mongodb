@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import PropTypes from 'prop-types';
 import throttle from 'lodash/throttle';
 import isEqual from 'lodash/isEqual';
@@ -11,7 +11,9 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { withInquery } from '../../restClient';
 import TextInput from '../TextInput';
 
-class TextInputAutocomplete extends Component {
+class TextInputSuggest extends Component {
+  inputRef = createRef();
+
   constructor(props) {
     super(props);
 
@@ -66,9 +68,9 @@ class TextInputAutocomplete extends Component {
       );
 
     if (list.length > 0)
-      return list.map(({ id, name }, index) => (
+      return list.map(({ _id, name }, index) => (
         <ListItem
-          key={id}
+          key={_id}
           dense
           disabled={isLoading}
           button
@@ -82,11 +84,9 @@ class TextInputAutocomplete extends Component {
     return null;
   }
 
-  handleInputRef = ref => {
-    const { handleInputRef } = this.props;
-    this.inputRef = ref;
-    if (handleInputRef) handleInputRef(ref);
-  };
+  get ref() {
+    return this.props.inputRef || this.inputRef;
+  }
 
   handleFocus = () => {
     const { lastValue } = this.state;
@@ -143,7 +143,7 @@ class TextInputAutocomplete extends Component {
       case 27: {
         // esc
         event.preventDefault();
-        this.inputRef.blur();
+        this.ref.current.blur();
         break;
       }
       case 13: {
@@ -170,15 +170,7 @@ class TextInputAutocomplete extends Component {
   };
 
   render() {
-    const {
-      autocompleteInquery,
-      endpoint,
-      handleInputRef,
-      minLength,
-      onReset,
-      onSelect,
-      ...rest
-    } = this.props;
+    const { autocompleteInquery, endpoint, minLength, onReset, onSelect, ...rest } = this.props;
     return (
       <>
         <TextInput
@@ -187,7 +179,7 @@ class TextInputAutocomplete extends Component {
           onFocus={this.handleFocus}
           onBlur={() => this.patchState({ visible: false })}
           autoComplete="off"
-          inputRef={this.handleInputRef}
+          inputRef={this.ref}
         />
         {this.state.visible && <List>{this.listContent}</List>}
       </>
@@ -195,22 +187,22 @@ class TextInputAutocomplete extends Component {
   }
 }
 
-TextInputAutocomplete.propTypes = {
+TextInputSuggest.propTypes = {
   autocompleteInquery: PropTypes.shape().isRequired,
   defaultValue: PropTypes.string,
   endpoint: PropTypes.string.isRequired,
-  handleInputRef: PropTypes.func,
+  inputRef: PropTypes.shape(),
   minLength: PropTypes.number,
   onReset: PropTypes.func.isRequired,
   onSelect: PropTypes.func.isRequired,
 };
 
-TextInputAutocomplete.defaultProps = {
-  handleInputRef: undefined,
+TextInputSuggest.defaultProps = {
+  inputRef: undefined,
   defaultValue: '',
   minLength: 2,
 };
 
 const propsToOptions = ({ endpoint }) => ({ endpoint });
 
-export default withInquery('autocomplete', propsToOptions)(TextInputAutocomplete);
+export default withInquery('autocomplete', propsToOptions)(TextInputSuggest);

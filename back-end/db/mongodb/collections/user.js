@@ -10,7 +10,17 @@ async function findById(collection, id) {
   return userDoc;
 }
 
+// TODO: check security risk with criteria
+async function findByName(collection, criteria, limit) {
+  const userDocs = await collection
+    .find({ name: { $regex: criteria } })
+    .limit(limit)
+    .toArray();
+  return userDocs;
+}
+
 module.exports = {
   findById,
+  findByName,
   insert,
 };

@@ -1,16 +1,19 @@
-import React from 'react';
+import React, { useRef } from 'react';
 
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
-import useForm from 'react-hook-form';
 
 import BackWithFallback from '../BackWithFallback';
 import ButtonWithSpinner from '../ButtonWithSpinner';
 import TextInput from '../TextInput';
-import TextInputAutocomplete from '../TextInputAutocomplete';
+import TextInputSuggest from '../TextInputSuggest';
 import { LAYOUT_BREAKPOINT } from '../constants';
 import { useInquery } from '../../restClient';
+import useFormValidation from '../useFormValidation';
+
+import createValidation from '../../../shared/validation';
+import schemas from '../../../shared/validation/forms/transaction';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -24,73 +27,57 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const makeSubmitHandler = (transactionInquery, handleSubmit) =>
-  handleSubmit(({ amount, correspondentID: id }, event) => {
-    event.preventDefault();
-    transactionInquery.send({
-      endpoint: `/api/transaction`,
-      method: 'POST',
-      body: JSON.stringify({ amount, id }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+const validate = createValidation({ schemas }).getSchema('form_transaction');
+
+const makeSubmitHandler = transactionInquery => data => {
+  transactionInquery.send({
+    endpoint: `/private/transaction`,
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json',
+    },
   });
+};
 
 function TransactionForm() {
   const { actions } = useStyles();
-  const validations = useForm();
-  const transactionInquery = useInquery('transaction');
+  const corrRef = useRef(null);
+  const corrIDRef = useRef(null);
 
-  const { errors, handleSubmit, register, setValue, triggerValidation } = validations;
+  const transactionInquery = useInquery('transaction');
+  const [formProps, errors] = useFormValidation({
+    validate,
+    submit: makeSubmitHandler(transactionInquery),
+  });
+
   const { correspondent, correspondentID, amount } = errors;
   const corrError = correspondent || correspondentID;
 
   return (
-    <form onSubmit={makeSubmitHandler(transactionInquery, handleSubmit)}>
-      <TextInputAutocomplete
+    <form {...formProps}>
+      <TextInputSuggest
         name="correspondent"
         label="Correspondent"
-        endpoint="/autocomplete"
-        onSelect={({ id, name }) => {
-          setValue('correspondentID', id);
-          setValue('correspondent', name);
-          triggerValidation({ name: 'correspondentID' });
+        endpoint="/private/suggest"
+        inputRef={corrRef}
+        onSelect={({ _id, name }) => {
+          corrIDRef.current.value = _id;
+          corrRef.current.value = name;
         }}
         onReset={() => {
-          setValue('correspondentID', '');
-          triggerValidation({ name: 'correspondentID' });
+          corrIDRef.current.value = '';
         }}
-        handleInputRef={register({
-          minLength: {
-            value: 2,
-            message: 'Minimum 2 sybmols for search',
-          },
-        })}
         error={!!corrError}
         helperText={corrError && corrError.message}
       />
-      <TextField
-        style={{ display: 'none' }}
-        name="correspondentID"
-        type="text"
-        inputRef={register({
-          required: 'Select from the dropdown list',
-        })}
-      />
+      <TextField name="correspondentID" type="hidden" inputRef={corrIDRef} />
       <TextInput
         name="amount"
         type="number"
         label="Amount"
         defaultValue=""
         inputProps={{ step: 0.01 }}
-        inputRef={register({
-          required: 'Required field',
-          max: {
-            value: 500,
-            message: 'The balance is not enough',
-          },
-        })}
         error={!!amount}
         helperText={amount && amount.message}
       />

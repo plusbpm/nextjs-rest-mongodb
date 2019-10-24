@@ -1,4 +1,4 @@
-const [emailSchema, passwordSchema, loginSchema] = require('./login');
+const [emailSchema, passwordSchema] = require('./login');
 
 const userSchema = require('../entities/user');
 
@@ -6,7 +6,18 @@ const registerSchema = {
   $id: 'form_register',
   type: 'object',
   properties: {
-    ...loginSchema.properties,
+    email: {
+      $ref: 'enitity_email#/properties/label',
+      messages: {
+        required: 'Required field',
+      },
+    },
+    password: {
+      $ref: 'enitity_password#/properties/input',
+      messages: {
+        required: 'Required field',
+      },
+    },
     name: {
       $ref: 'enitity_user#/properties/name',
       messages: {

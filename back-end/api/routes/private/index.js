@@ -1,4 +1,5 @@
-const { session } = require('../../../modules');
+const { session, user } = require('../../../modules');
+const transactionSchemas = require('../../../../shared/validation/forms/transaction');
 
 const throwForbidden = () => {
   const error = new Error('Fobidden');
@@ -7,10 +8,28 @@ const throwForbidden = () => {
 };
 
 module.exports = async fastify => {
+  fastify.validation.addSchemas(transactionSchemas);
+
   fastify.addHook('preHandler', async request => {
     const sessionId = request.cookies[session.cookieName];
     if (!sessionId) throwForbidden();
     const sessionDoc = await session.find(fastify.dbAdapter, sessionId);
     if (!sessionDoc) throwForbidden();
   });
+
+  fastify.get('/suggest', async request => {
+    const { q } = request.query;
+    const list = await user.suggestByCriteria(fastify.dbAdapter, q);
+    return list;
+  });
+
+  fastify.post(
+    '/transaction',
+    { schema: { body: { $ref: 'form_transaction' } } },
+    async request => {
+      // const { correspondent, correspondentID, amount } = request.body;
+      console.log(request.body);
+      return null;
+    },
+  );
 };
