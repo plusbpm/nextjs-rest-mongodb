@@ -18,7 +18,7 @@ const dev = process.env.NODE_ENV !== 'production';
 const mockingEnabled = process.env.CREATE_MOCK_DATA === 'true';
 
 async function start() {
-  const nextApp = next({ dev, dir: './front-end' });
+  const nextApp = next({ dev, dir: './react' });
   const nextHandle = nextApp.getRequestHandler();
   await nextApp.prepare();
 
