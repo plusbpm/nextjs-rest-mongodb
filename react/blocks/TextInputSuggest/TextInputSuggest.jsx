@@ -68,16 +68,16 @@ class TextInputSuggest extends Component {
       );
 
     if (list.length > 0)
-      return list.map(({ _id, name }, index) => (
+      return list.map(({ label, value }, index) => (
         <ListItem
-          key={_id}
+          key={value}
           dense
           disabled={isLoading}
           button
           selected={highlighted === index}
           onMouseDown={() => this.select(index)}
         >
-          <ListItemText primary={name} />
+          <ListItemText primary={label} />
         </ListItem>
       ));
 

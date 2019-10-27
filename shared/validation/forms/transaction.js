@@ -17,9 +17,9 @@ const transactionSchema = {
       },
     },
     amount: {
-      type: 'number',
+      type: 'string',
+      exactDecimal: 2,
       messages: {
-        type: 'Must be a number',
         required: 'Required field',
       },
     },

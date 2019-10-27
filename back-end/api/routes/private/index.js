@@ -20,7 +20,7 @@ module.exports = async fastify => {
   fastify.get('/suggest', async request => {
     const { q } = request.query;
     const list = await user.suggestByCriteria(fastify.dbAdapter, q);
-    return list;
+    return list.map(({ _id, name }) => ({ label: name, value: _id }));
   });
 
   fastify.post(

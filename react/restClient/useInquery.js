@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import invariant from '../util/invariant';
+import invariant from '../../shared/util/invariant';
 import useRestClient from './useRestClient';
 
 const useInquery = (id, options = {}) => {

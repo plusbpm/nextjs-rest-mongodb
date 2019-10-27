@@ -3,7 +3,7 @@ import pick from 'lodash/pick';
 import mapValues from 'lodash/mapValues';
 
 import Inquiry from './Inquiry';
-import invariant from '../util/invariant';
+import invariant from '../../shared/util/invariant';
 
 const mapResultsFunc = inquery => inquery.getState();
 

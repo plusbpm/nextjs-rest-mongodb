@@ -3,7 +3,7 @@ import getFormData from 'get-form-data';
 import get from 'lodash/get';
 import omitBy from 'lodash/omitBy';
 import isEmpty from 'lodash/isEmpty';
-import invariant from '../util/invariant';
+import invariant from '../../shared/util/invariant';
 
 const omitPredicate = value => ['', null, undefined, NaN].indexOf(value) !== -1;
 

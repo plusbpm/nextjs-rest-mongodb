@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
@@ -43,7 +43,8 @@ const makeSubmitHandler = transactionInquery => data => {
 function TransactionForm() {
   const { actions } = useStyles();
   const corrRef = useRef(null);
-  const corrIDRef = useRef(null);
+  // const corrIDRef = useRef(null);
+  const [corrID, setCorrID] = useState('');
 
   const transactionInquery = useInquery('transaction');
   const [formProps, errors] = useFormValidation({
@@ -61,17 +62,17 @@ function TransactionForm() {
         label="Correspondent"
         endpoint="/private/suggest"
         inputRef={corrRef}
-        onSelect={({ _id, name }) => {
-          corrIDRef.current.value = _id;
-          corrRef.current.value = name;
+        onSelect={({ label, value }) => {
+          corrRef.current.value = label;
+          setCorrID(value);
         }}
         onReset={() => {
-          corrIDRef.current.value = '';
+          setCorrID('');
         }}
         error={!!corrError}
         helperText={corrError && corrError.message}
       />
-      <TextField name="correspondentID" type="hidden" inputRef={corrIDRef} />
+      <TextField name="correspondentID" type="hidden" value={corrID} />
       <TextInput
         name="amount"
         type="number"
