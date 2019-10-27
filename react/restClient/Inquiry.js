@@ -41,7 +41,8 @@ class Inquiry {
 
   patchState = patch => {
     this.state = { ...this.state, ...patch };
-    this.stateChangeHandlers.forEach(handler => handler(this.state));
+    const copyStateChangeHandlers = [...this.stateChangeHandlers];
+    copyStateChangeHandlers.forEach(handler => handler(this.state));
   };
 
   get = (path, defaultValue) => get(this.getState(), path, defaultValue);

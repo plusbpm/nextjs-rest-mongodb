@@ -6,17 +6,20 @@
     "node": ">=10"
   },
   "scripts": {
-    "analyze": "BUNDLE_ANALYZE=both next build",
-    "analyze:server": "BUNDLE_ANALYZE=server next build",
-    "analyze:browser": "BUNDLE_ANALYZE=browser next build",
+    "analyze": "BUNDLE_ANALYZE=both npm run build",
+    "analyze:server": "BUNDLE_ANALYZE=server npm run build",
+    "analyze:browser": "BUNDLE_ANALYZE=browser npm run build",
     "build": "next build ./react",
-    "dev": "npx supervisor -n -t -w back-end,config,shared,next.config.js,server.js server.js",
+    "backend": "npx supervisor -n -t -w back-end,.env,shared,next.config.js ./back-end/server.js",
+    "dev": "NODE_ENV=development npm run start-servers",
     "lint": "eslint back-end config react shared --ext .js,.jsx",
     "mongo": "docker start nextjs-rest-mongodb || npm run mongoup",
     "mongoup": "docker run -d --rm -p27017:27017 -v /tmp/nextjs_dev_db/:/data/db/ --name nextjs-rest-mongodb mvertes/alpine-mongo; exit 0",
     "predev": "cp -n .env.example .env; npm run mongo",
     "prestart": "npm run build",
-    "start": "NODE_ENV=production node server.js"
+    "react": "node ./react/server.js",
+    "start": "NODE_ENV=production npm run start-servers",
+    "start-servers": "run-p -l backend react"
   },
   "dependencies": {
     "@material-ui/core": "^4.5.1",
@@ -34,10 +37,13 @@
     "lodash": "4.17.15",
     "mongodb": "^3.3.3",
     "next": "9.1.1",
+    "npm-run-all": "^4.1.5",
     "prop-types": "15.7.2",
     "query-string": "6.8.3",
     "react": "16.11.0",
     "react-dom": "16.11.0",
+    "webpack": "^4.41.2",
+    "webpack-merge": "^4.2.2",
     "xss": "^1.0.6"
   },
   "devDependencies": {
