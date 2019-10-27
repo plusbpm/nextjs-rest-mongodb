@@ -23,13 +23,8 @@ module.exports = async fastify => {
     return list.map(({ _id, name }) => ({ label: name, value: _id }));
   });
 
-  fastify.post(
-    '/transaction',
-    { schema: { body: { $ref: 'form_transaction' } } },
-    async request => {
-      // const { correspondent, correspondentID, amount } = request.body;
-      console.log(request.body);
-      return null;
-    },
-  );
+  fastify.post('/transaction', { schema: { body: { $ref: 'form_transaction' } } }, async () => {
+    // const { correspondent, correspondentID, amount } = request.body;
+    return null;
+  });
 };
