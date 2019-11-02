@@ -13,7 +13,7 @@ async function findById(collection, id) {
 // TODO: check security risk with criteria
 async function findByName(collection, criteria, limit) {
   const userDocs = await collection
-    .find({ name: { $regex: criteria } })
+    .find({ name: { $regex: criteria, $options: 'i' } })
     .limit(limit)
     .toArray();
   return userDocs;

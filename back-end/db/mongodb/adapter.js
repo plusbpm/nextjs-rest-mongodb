@@ -24,6 +24,7 @@ class MongoAdapter {
     this[attachMethodName] = async (...args) => {
       if (!this.inited) await this.init();
       const collection = this.db.collection(collectionName);
+      collection.mongoClient = this.mongoClient;
       return method(collection, ...args);
     };
   }

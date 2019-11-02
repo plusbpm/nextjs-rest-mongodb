@@ -17,7 +17,7 @@ const validate = (precision, data) => {
     return false;
   }
 
-  const [whole, decimal] = trimmedData.split('.');
+  const [whole, decimal = ''] = trimmedData.split('.');
   if (!validDigits(whole) || !validDigits(decimal)) {
     validate.errors = [
       {
