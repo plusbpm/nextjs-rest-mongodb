@@ -12,16 +12,15 @@ import { withInquery } from '../../restClient';
 import TextInput from '../TextInput';
 
 class TextInputSuggest extends Component {
-  inputRef = createRef();
-
   constructor(props) {
     super(props);
 
     this.throttledHandler = throttle(this.handleValue, 300, { leading: false });
+    const value = typeof props.value !== 'undefined' ? props.value : props.defaultValue;
     this.state = {
       highlighted: null,
-      lastValue: props.defaultValue,
       reseted: false,
+      value,
       visible: false,
     };
   }
@@ -85,27 +84,30 @@ class TextInputSuggest extends Component {
   }
 
   get ref() {
-    return this.props.inputRef || this.inputRef;
+    const { inputRef } = this.props;
+    if (inputRef) return inputRef;
+    this.inputRef = this.inputRef || createRef();
+    return this.inputRef;
   }
 
   handleFocus = () => {
-    const { lastValue } = this.state;
+    const { value } = this.state;
     const { data } = this.inqueryState;
-    if (!data && lastValue.length >= this.props.minLength) {
-      this.inquery.send({ query: { q: lastValue } });
+    if (!data && value.length >= this.props.minLength) {
+      this.inquery.send({ query: { q: value } });
     }
     this.patchState({ visible: true });
   };
 
   handleChange = event => {
     const trimmedValue = (event.target.value || '').trim();
-    const { lastValue, reseted } = this.state;
+    const { value, reseted } = this.state;
     const { onReset, minLength } = this.props;
 
-    if (trimmedValue === lastValue) return;
+    if (trimmedValue === value) return;
     if (!reseted) onReset();
 
-    const patch = { visible: true, reseted: true, lastValue: trimmedValue };
+    const patch = { visible: true, reseted: true, value: trimmedValue };
     if (trimmedValue.length >= minLength) {
       this.throttledHandler(trimmedValue);
     }
@@ -165,12 +167,20 @@ class TextInputSuggest extends Component {
 
   select = index => {
     const item = this.inqueryState.list[index];
-    this.patchState({ reseted: false, visible: false });
+    this.patchState({ reseted: false, visible: false, value: item.label });
     this.props.onSelect(item);
   };
 
   render() {
-    const { autocompleteInquery, endpoint, minLength, onReset, onSelect, ...rest } = this.props;
+    const {
+      autocompleteInquery,
+      defaultValue,
+      endpoint,
+      minLength,
+      onReset,
+      onSelect,
+      ...rest
+    } = this.props;
     return (
       <>
         <TextInput
@@ -180,6 +190,7 @@ class TextInputSuggest extends Component {
           onBlur={() => this.patchState({ visible: false })}
           autoComplete="off"
           inputRef={this.ref}
+          value={this.state.value}
         />
         {this.state.visible && <List>{this.listContent}</List>}
       </>
@@ -195,12 +206,14 @@ TextInputSuggest.propTypes = {
   minLength: PropTypes.number,
   onReset: PropTypes.func.isRequired,
   onSelect: PropTypes.func.isRequired,
+  value: PropTypes.string,
 };
 
 TextInputSuggest.defaultProps = {
   inputRef: undefined,
   defaultValue: '',
   minLength: 2,
+  value: undefined,
 };
 
 const propsToOptions = ({ endpoint }) => ({ endpoint });

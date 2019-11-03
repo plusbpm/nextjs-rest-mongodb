@@ -15,14 +15,12 @@ async function create(collection, { senderID, recipientID, amount }) {
     const transactionCollection = mongoClient.db().collection('transaction');
 
     const senderObjectID = convertToObjectId(senderID);
-    const recipientObjectID = convertToObjectId(recipientID);
-
-    const [senderDoc, recipientDoc] = await Promise.all([
-      userCollection.findOne({ _id: senderObjectID }, { session }),
-      userCollection.findOne({ _id: recipientObjectID }, { session }),
-    ]);
+    const senderDoc = await userCollection.findOne({ _id: senderObjectID }, { session });
     if (!senderDoc) throw new Error('No sender data found');
     if (senderDoc.account < amount) throw new Error('Not enough PW');
+
+    const recipientObjectID = convertToObjectId(recipientID);
+    const recipientDoc = await userCollection.findOne({ _id: recipientObjectID }, { session });
     if (!recipientDoc) throw new Error('No recipient data found');
 
     const dt = new Date();

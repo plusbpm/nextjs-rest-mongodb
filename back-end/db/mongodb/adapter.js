@@ -32,6 +32,18 @@ class MongoAdapter {
   async init() {
     await this.mongoClient.connect();
     this.db = this.mongoClient.db();
+    const admin = this.db.admin();
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      try {
+        // eslint-disable-next-line no-await-in-loop
+        await admin.replSetGetStatus();
+        break;
+      } catch (error) {
+        // eslint-disable-next-line no-await-in-loop
+        await new Promise(rs => setTimeout(rs, 1000));
+      }
+    }
     this.inited = true;
   }
 
