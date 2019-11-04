@@ -68,6 +68,7 @@ async function create(collection, { senderID, recipientID, amount }) {
     if (recipientModifiedCount !== 1) throw new Error('Recipient competitive write error');
   } catch (error) {
     await session.abortTransaction();
+    await session.endSession();
     throw error;
   }
 
