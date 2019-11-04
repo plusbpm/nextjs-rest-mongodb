@@ -1,4 +1,5 @@
 import React from 'react';
+import get from 'lodash/get';
 
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -39,6 +40,15 @@ const Transaction = () => {
 
 Transaction.getInitialProps = async ctx => {
   redirectWith(ctx, '/', userId => !userId);
+  const transactionID = get(ctx, 'query.transactionID');
+  if (!transactionID) return null;
+
+  return ctx.restClient
+    .getInquery('baseTransaction', {
+      endpoint: '/private/transaction',
+      query: { transactionID },
+    })
+    .send();
 };
 
 export default Transaction;

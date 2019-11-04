@@ -9,7 +9,7 @@ import ButtonWithSpinner from '../ButtonWithSpinner';
 import TextInput from '../TextInput';
 import TextInputSuggest from '../TextInputSuggest';
 import { LAYOUT_BREAKPOINT } from '../constants';
-import { useInquery } from '../../restClient';
+import { useInqueriesMap } from '../../restClient';
 import useFormValidation from '../useFormValidation';
 import Snackbar from '../Snackbar';
 
@@ -50,8 +50,12 @@ const makeSubmitHandler = (transactionInquery, handleSuccess) => data => {
 };
 
 function TransactionForm() {
+  const { baseTransaction, transaction } = useInqueriesMap({
+    ids: ['transaction', 'baseTransaction'],
+  });
+
   const { actions, successSnackbar } = useStyles();
-  const [corrID, setCorrID] = useState('');
+  const [corrID, setCorrID] = useState(baseTransaction.get('data.correspondentID', ''));
   const [transferNumber, setTransferNumber] = useState(0);
   const [success, setSuccess] = useState(false);
 
@@ -62,10 +66,9 @@ function TransactionForm() {
     setTransferNumber(transferNumber + 1);
   };
 
-  const transactionInquery = useInquery('transaction');
   const [formProps, errors] = useFormValidation({
     validate,
-    submit: makeSubmitHandler(transactionInquery, handleSuccess),
+    submit: makeSubmitHandler(transaction, handleSuccess),
   });
 
   const { correspondent, correspondentID, amount } = errors;
@@ -86,13 +89,14 @@ function TransactionForm() {
         error={!!corrError}
         helperText={corrError && corrError.message}
         disabled={success}
+        defaultValue={baseTransaction.get('data.correspondent', '')}
       />
       <TextField name="correspondentID" type="hidden" value={corrID} />
       <TextInput
         name="amount"
         type="number"
         label="Amount"
-        defaultValue=""
+        defaultValue={baseTransaction.get('data.amount')}
         inputProps={{ step: 0.01 }}
         error={!!amount}
         helperText={amount && amount.message}

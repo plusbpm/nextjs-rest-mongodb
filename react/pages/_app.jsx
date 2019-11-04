@@ -2,6 +2,7 @@ import React from 'react';
 import Head from 'next/head';
 import App from 'next/app';
 import Router from 'next/router';
+import unset from 'lodash/unset';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider } from '@material-ui/styles';
@@ -9,6 +10,12 @@ import { ThemeProvider } from '@material-ui/styles';
 import AppProvider from '../appProvider';
 import { createClient } from '../restClient';
 import theme from '../material-ui/theme';
+
+const mapFunc = inquery => {
+  const state = inquery.getState();
+  unset(state, 'sendOptions.headers.cookie');
+  return state;
+};
 
 export default class MyApp extends App {
   constructor(props) {
@@ -26,7 +33,7 @@ export default class MyApp extends App {
     const pageProps =
       (Component.getInitialProps && (await Component.getInitialProps({ ...ctx, restClient }))) ||
       {};
-    const cachedData = restClient.getInqueriesMap({ results: true });
+    const cachedData = restClient.getInqueriesMap({ mapFunc });
 
     return { pageProps, cachedData };
   }

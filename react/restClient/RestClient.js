@@ -1,6 +1,7 @@
 import lodashKeys from 'lodash/keys';
 import pick from 'lodash/pick';
 import mapValues from 'lodash/mapValues';
+import uniq from 'lodash/uniq';
 
 import Inquiry from './Inquiry';
 import invariant from '../../shared/util/invariant';
@@ -40,10 +41,14 @@ class RestClient {
   getInqueriesMap = options => {
     const { ids, mapFunc, results } = options || {};
     const originalIds = ids || [];
-    lodashKeys(this.initialState).forEach(this.getInquery);
+    const allUniqKeys = uniq(lodashKeys(this.initialState).concat(originalIds));
+    allUniqKeys.forEach(this.getInquery);
+
     const inqueriesMap =
       originalIds.length > 0 ? pick(this.inqueries, originalIds) : { ...this.inqueries };
-    return mapFunc || results ? mapValues(inqueriesMap, mapFunc || mapResultsFunc) : inqueriesMap;
+
+    const withFunc = mapFunc || (results ? mapResultsFunc : undefined);
+    return withFunc ? mapValues(inqueriesMap, withFunc) : inqueriesMap;
   };
 
   cleanErrors = () => {

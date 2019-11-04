@@ -75,6 +75,14 @@ async function create(collection, { senderID, recipientID, amount }) {
   await session.endSession();
 }
 
+async function findById(collection, uid, id) {
+  const userId = convertToObjectId(uid);
+  const transactionID = convertToObjectId(id);
+  const transactionDoc = await collection.findOne({ _id: transactionID, userId });
+  return transactionDoc;
+}
+
 module.exports = {
   create,
+  findById,
 };

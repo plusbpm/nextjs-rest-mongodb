@@ -11,9 +11,9 @@ async function findById(collection, id) {
 }
 
 // TODO: check security risk with criteria
-async function findByName(collection, criteria, limit) {
+async function findByName(collection, userId, criteria, limit) {
   const userDocs = await collection
-    .find({ name: { $regex: criteria, $options: 'i' } })
+    .find({ name: { $regex: criteria, $options: 'i' }, _id: { $ne: convertToObjectId(userId) } })
     .limit(limit)
     .toArray();
   return userDocs;

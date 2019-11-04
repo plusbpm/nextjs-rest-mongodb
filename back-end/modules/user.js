@@ -3,8 +3,8 @@ async function find(db, userId) {
   return db.userFindById(userId);
 }
 
-async function suggestByCriteria(db, criteria, limit = 10) {
-  return db.userFindByName(criteria, limit);
+async function suggestByCriteria(db, userId, criteria, limit = 10) {
+  return db.userFindByName(userId, criteria, limit);
 }
 
 module.exports = {
