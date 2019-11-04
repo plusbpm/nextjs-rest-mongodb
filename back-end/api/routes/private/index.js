@@ -59,4 +59,28 @@ module.exports = async fastify => {
     );
     return transactionDoc;
   });
+
+  const transactionsQuerySchema = {
+    type: 'object',
+    properties: {
+      filter_name: { type: 'string' },
+      filter_amount: { type: 'string', exactDecimal: 2 },
+      filter_date: { type: 'string', pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' },
+      sort: {
+        type: 'string',
+        enum: [
+          'correspondent_asc',
+          'correspondent_desc',
+          'amount_asc',
+          'amount_desc',
+          'dt_asc',
+          'dt_desc',
+        ],
+      },
+    },
+  };
+  fastify.get('/transactions', { schema: { query: transactionsQuerySchema } }, async request => {
+    const transactions = await transaction.fetch(dbAdapter, request.userId, request.query);
+    return transactions;
+  });
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import Range from 'lodash/range';
+import PropTypes from 'prop-types';
 import Link from 'next/link';
 
 import Divider from '@material-ui/core/Divider';
@@ -17,27 +17,26 @@ import TrendingUp from '@material-ui/icons/TrendingUp';
 
 import useStyles from './TransactionList.styles';
 
-function TransactionList(props) {
-  const { list, text, secondaryAction } = useStyles();
+function TransactionList({ list, ...rest }) {
+  const classes = useStyles();
   return (
-    <List className={list} {...props}>
+    <List {...rest} className={classes.list}>
       <Divider />
-      {Range(0, 10).map(key => {
-        const isDebit = Boolean(key % 2);
+      {list.map(({ _id, incoming, amount, account, correspondent, dt }) => {
         return (
-          <ListItem dense divider className="item" key={key}>
-            <Tooltip title={isDebit ? 'debit' : 'credit'}>
+          <ListItem dense divider className="item" key={_id}>
+            <Tooltip title={incoming ? 'debit' : 'credit'}>
               <ListItemIcon>
-                {isDebit ? <TrendingUp color="primary" /> : <TrendingDown color="error" />}
+                {incoming ? <TrendingUp color="primary" /> : <TrendingDown color="error" />}
               </ListItemIcon>
             </Tooltip>
             <ListItemText
-              className={text}
-              primary={`Amount - ${key} PW; Saldo - ${500 - key}`}
-              secondary={`Correspondent ${key}, 10:11 pm Jan 9, 2014`}
+              className={classes.text}
+              primary={`Amount - ${amount} PW; Saldo - ${account}`}
+              secondary={`Correspondent: ${correspondent}, ${dt}`}
             />
             <Link href="/cabinet/transaction">
-              <ListItemSecondaryAction className={secondaryAction}>
+              <ListItemSecondaryAction className={classes.secondaryAction}>
                 <Tooltip title="Repeat transaction">
                   <IconButton color="secondary">
                     <Replay />
@@ -51,5 +50,9 @@ function TransactionList(props) {
     </List>
   );
 }
+
+TransactionList.propTypes = {
+  list: PropTypes.arrayOf(PropTypes.shape()).isRequired,
+};
 
 export default TransactionList;

@@ -8,7 +8,7 @@ import Filter from './Filter';
 import Sorting from './Sorting';
 
 const filters = [
-  { id: 'name', type: 'text', label: 'Correspondent name' },
+  { id: 'correspondent', type: 'text', label: 'Correspondent name' },
   { id: 'amount', type: 'number', min: 0.01, max: 500, label: 'Amount' },
   {
     id: 'date',
@@ -20,9 +20,9 @@ const filters = [
 ];
 
 const sortings = [
-  { id: 'name', label: 'Name' },
+  { id: 'correspondent', label: 'Name' },
   { id: 'amount', label: 'Amount' },
-  { id: 'date', label: 'Date' },
+  { id: 'dt', label: 'Date' },
 ];
 
 function Subheader() {

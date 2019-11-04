@@ -76,7 +76,7 @@ module.exports = async adapter => {
       .limit(1)
       .toArray();
 
-    const amount = Math.floor(1 + Math.random() * 5);
+    const amount = Math.floor((1 + Math.random() * 5) * 100) / 100;
 
     if (
       !senderUser ||

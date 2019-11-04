@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 
-import { useRouter } from 'next/router';
+import Router from 'next/router';
 import NextLink from 'next/link';
 
 import Card from '@material-ui/core/Card';
@@ -24,7 +24,7 @@ import loginSchemas from '../../../shared/validation/forms/login';
 
 const validation = createValidation({ schemas: [...registerSchemas, ...loginSchemas] });
 
-const makeSubmitHandler = ({ register }, actionInquery, router) => data => {
+const makeSubmitHandler = ({ register }, actionInquery) => data => {
   actionInquery
     .send({
       endpoint: `/${register ? 'register' : 'login'}`,
@@ -37,7 +37,7 @@ const makeSubmitHandler = ({ register }, actionInquery, router) => data => {
     .then(() => {
       const { error } = actionInquery.getState();
       if (error) return;
-      router.push(register ? '/' : '/cabinet');
+      Router.push(register ? '/' : '/cabinet');
     });
 };
 
@@ -45,11 +45,10 @@ const FormAuth = props => {
   const { register } = props;
   const { actions, card, mobileHeader, snackbar } = useStyles();
   const actionInquery = useInquery(register ? 'register' : 'login');
-  const router = useRouter();
 
   const [formProps, errors] = useFormValidation({
     validate: validation.getSchema(register ? 'form_register' : 'form_login'),
-    submit: makeSubmitHandler(props, actionInquery, router),
+    submit: makeSubmitHandler(props, actionInquery),
   });
   const { nextRoutingOccur } = useContext(Context);
 

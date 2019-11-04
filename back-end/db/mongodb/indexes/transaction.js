@@ -12,6 +12,10 @@ module.exports = [
     background: true,
   },
   {
+    key: { date: 1 },
+    background: true,
+  },
+  {
     key: { amount: 1 },
     background: true,
   },

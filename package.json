@@ -26,6 +26,7 @@
     "@material-ui/icons": "^4.5.1",
     "@material-ui/styles": "^4.5.0",
     "ajv": "^6.10.2",
+    "big.js": "^5.2.2",
     "clsx": "^1.0.4",
     "dotenv-safe": "8.1.0",
     "fastify": "2.10.0",
