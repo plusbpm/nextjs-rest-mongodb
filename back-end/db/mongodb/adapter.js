@@ -37,11 +37,21 @@ class MongoAdapter {
     while (true) {
       try {
         // eslint-disable-next-line no-await-in-loop
-        await admin.replSetGetStatus();
+        const { members } = await admin.replSetGetStatus();
+        const hasPrimaryState = members
+          .map(({ stateStr }) => stateStr.toLowerCase())
+          .includes('primary');
+        if (!hasPrimaryState) throw new Error('No primary');
+
+        // eslint-disable-next-line no-await-in-loop
+        const { repl = {} } = await admin.serverStatus();
+        const isMaster = repl.ismaster;
+        if (!isMaster) throw new Error('No master');
+
         break;
       } catch (error) {
         // eslint-disable-next-line no-await-in-loop
-        await new Promise(rs => setTimeout(rs, 1000));
+        await new Promise(rs => setTimeout(rs, 10));
       }
     }
     this.inited = true;
