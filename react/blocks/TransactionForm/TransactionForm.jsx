@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
 
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import CardMedia from '@material-ui/core/CardMedia';
+import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 
 import BackWithFallback from '../BackWithFallback';
@@ -11,7 +18,6 @@ import TextInputSuggest from '../TextInputSuggest';
 import { LAYOUT_BREAKPOINT } from '../constants';
 import { useInqueriesMap } from '../../restClient';
 import useFormValidation from '../useFormValidation';
-import Snackbar from '../Snackbar';
 
 import createValidation from '../../../shared/validation';
 import schemas from '../../../shared/validation/forms/transaction';
@@ -26,8 +32,11 @@ const useStyles = makeStyles(theme => ({
       padding: theme.spacing(1, 0, 0, 0),
     },
   },
-  successSnackbar: {
-    margin: theme.spacing(1, 0, 1, 0),
+  successCard: {
+    margin: theme.spacing(2, 0, 1, 0),
+  },
+  successActions: {
+    justifyContent: 'flex-end',
   },
 }));
 
@@ -54,7 +63,7 @@ function TransactionForm() {
     ids: ['transaction', 'baseTransaction'],
   });
 
-  const { actions, successSnackbar } = useStyles();
+  const { actions, successCard, successActions } = useStyles();
   const [corrID, setCorrID] = useState(baseTransaction.get('data.correspondentID', ''));
   const [transferNumber, setTransferNumber] = useState(0);
   const [success, setSuccess] = useState(false);
@@ -73,6 +82,25 @@ function TransactionForm() {
 
   const { correspondent, correspondentID, amount } = errors;
   const corrError = correspondent || correspondentID;
+
+  if (success)
+    return (
+      <Card className={successCard}>
+        <CardContent>
+          <Typography color="textPrimary" component="p" variant="h6" gutterBottom>
+            Transaction completed successfully
+          </Typography>
+        </CardContent>
+        <CardActions className={successActions}>
+          <Button size="small" color="primary" href="/cabinet">
+            To history
+          </Button>
+          <Button size="small" color="primary" onClick={handleSuccessClose}>
+            Make another transaction
+          </Button>
+        </CardActions>
+      </Card>
+    );
 
   return (
     <form {...formProps} key={transferNumber}>
@@ -102,15 +130,6 @@ function TransactionForm() {
         helperText={amount && amount.message}
         disabled={success}
       />
-      {success && (
-        <Snackbar
-          className={successSnackbar}
-          messages={['Transaction successful']}
-          variant="success"
-          global={false}
-          onClose={handleSuccessClose}
-        />
-      )}
       <Grid container justify="flex-end" className={actions}>
         <BackWithFallback fallback="/cabinet">Cancel</BackWithFallback>
         <ButtonWithSpinner type="submit" color="primary" variant="contained" disabled={success}>
