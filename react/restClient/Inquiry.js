@@ -61,7 +61,7 @@ class Inquiry {
   send = options => {
     const number = this.client.getNextInqueryNumber();
     this.abort();
-    const { endpoint, query, ...fetchOptions } = {
+    const { endpoint, query, throwErrors, ...fetchOptions } = {
       ...this.options,
       ...options,
       signal: this.getAbortSignal(),
@@ -90,6 +90,12 @@ class Inquiry {
       }))
       .then(results => {
         if (number === this.state.number) this.patchState({ ...results, isLoading: false });
+        if (throwErrors && results.error) {
+          const error = new Error(results.error.message);
+          error.code = results.error.code;
+          error.statusCode = results.error.code;
+          throw error;
+        }
       });
   };
 

@@ -53,10 +53,12 @@ const CabinetLayout = () => {
 };
 
 CabinetLayout.getInitialProps = async ctx => {
-  redirectWith(ctx, '/', userId => !userId);
+  if (redirectWith(ctx, '/', userId => !userId)) return undefined;
+
   return ctx.restClient
     .getInquery('transactionsList', {
       endpoint: '/private/transactions',
+      throwErrors: true,
     })
     .send({ query: ctx.query });
 };

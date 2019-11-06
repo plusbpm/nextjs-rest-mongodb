@@ -1,6 +1,7 @@
 const { session, transaction, user } = require('../../../modules');
 const transactionSchemas = require('../../../../shared/validation/forms/transaction');
 const objectIdSchema = require('../../../../shared/validation/entities/objectId');
+const { CABINET__LIST_PER_PAGE } = require('../../../../shared/constants');
 
 const throwForbidden = () => {
   const error = new Error('Fobidden');
@@ -60,12 +61,16 @@ module.exports = async fastify => {
     return transactionDoc;
   });
 
-  const transactionsQuerySchema = {
+  const transactionsListQuerySchema = {
     type: 'object',
     properties: {
       filter_name: { type: 'string' },
       filter_amount: { type: 'string', exactDecimal: 2 },
       filter_date: { type: 'string', pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' },
+      page: {
+        type: 'number',
+        minimum: 1,
+      },
       sort: {
         type: 'string',
         enum: [
@@ -79,8 +84,17 @@ module.exports = async fastify => {
       },
     },
   };
-  fastify.get('/transactions', { schema: { query: transactionsQuerySchema } }, async request => {
-    const transactions = await transaction.fetch(dbAdapter, request.userId, request.query);
-    return transactions;
-  });
+  fastify.get(
+    '/transactions',
+    { schema: { query: transactionsListQuerySchema } },
+    async request => {
+      const transactions = await transaction.fetch(dbAdapter, request.userId, request.query);
+      if (request.query.page > Math.ceil(transactions.total / CABINET__LIST_PER_PAGE)) {
+        const pageError = new Error('Bad request');
+        pageError.statusCode = 400;
+        throw pageError;
+      }
+      return transactions;
+    },
+  );
 };
