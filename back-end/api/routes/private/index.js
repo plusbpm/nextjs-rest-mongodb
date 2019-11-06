@@ -1,5 +1,10 @@
 const { session, transaction, user } = require('../../../modules');
-const transactionSchemas = require('../../../../shared/validation/forms/transaction');
+const transactionPostSchemas = require('../../../../shared/validation/forms/transactionPost');
+const [transactionGetSchema] = require('../../../../shared/validation/forms/transactionGet');
+const [
+  transactionsListSchema,
+] = require('../../../../shared/validation/forms/transactionsListQuery');
+const [userSuggestSchema] = require('../../../../shared/validation/forms/userSuggest');
 const objectIdSchema = require('../../../../shared/validation/entities/objectId');
 const { CABINET__LIST_PER_PAGE } = require('../../../../shared/constants');
 
@@ -12,7 +17,7 @@ const throwForbidden = () => {
 module.exports = async fastify => {
   const { dbAdapter } = fastify;
 
-  fastify.validation.addSchemas([...transactionSchemas, objectIdSchema]);
+  fastify.validation.addSchemas([...transactionPostSchemas, objectIdSchema]);
 
   fastify.addHook('preHandler', async request => {
     const sessionId = request.cookies[session.cookieName];
@@ -22,14 +27,7 @@ module.exports = async fastify => {
     request.userId = sessionDoc.userId;
   });
 
-  const suggestQuerySchema = {
-    type: 'object',
-    properties: {
-      q: { type: 'string', minLength: 2 },
-    },
-    required: ['q'],
-  };
-  fastify.get('/suggest', { schema: { query: suggestQuerySchema } }, async request => {
+  fastify.get('/suggest', { schema: { query: userSuggestSchema } }, async request => {
     const { q } = request.query;
     const list = await user.suggestByCriteria(dbAdapter, request.userId, q);
     return list.map(({ _id, name }) => ({ label: name, value: _id }));
@@ -45,14 +43,7 @@ module.exports = async fastify => {
     },
   );
 
-  const transactionQuerySchema = {
-    type: 'object',
-    properties: {
-      transactionID: { $ref: 'objectId' },
-    },
-    required: ['transactionID'],
-  };
-  fastify.get('/transaction', { schema: { query: transactionQuerySchema } }, async request => {
+  fastify.get('/transaction', { schema: { query: transactionGetSchema } }, async request => {
     const transactionDoc = await transaction.findOne(
       dbAdapter,
       request.userId,
@@ -61,40 +52,13 @@ module.exports = async fastify => {
     return transactionDoc;
   });
 
-  const transactionsListQuerySchema = {
-    type: 'object',
-    properties: {
-      filter_name: { type: 'string' },
-      filter_amount: { type: 'string', exactDecimal: 2 },
-      filter_date: { type: 'string', pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' },
-      page: {
-        type: 'number',
-        minimum: 1,
-      },
-      sort: {
-        type: 'string',
-        enum: [
-          'correspondent_asc',
-          'correspondent_desc',
-          'amount_asc',
-          'amount_desc',
-          'dt_asc',
-          'dt_desc',
-        ],
-      },
-    },
-  };
-  fastify.get(
-    '/transactions',
-    { schema: { query: transactionsListQuerySchema } },
-    async request => {
-      const transactions = await transaction.fetch(dbAdapter, request.userId, request.query);
-      if (request.query.page > Math.ceil(transactions.total / CABINET__LIST_PER_PAGE)) {
-        const pageError = new Error('Bad request');
-        pageError.statusCode = 400;
-        throw pageError;
-      }
-      return transactions;
-    },
-  );
+  fastify.get('/transactions', { schema: { query: transactionsListSchema } }, async request => {
+    const transactions = await transaction.fetch(dbAdapter, request.userId, request.query);
+    if (request.query.page > Math.ceil(transactions.total / CABINET__LIST_PER_PAGE)) {
+      const pageError = new Error('Bad request');
+      pageError.statusCode = 400;
+      throw pageError;
+    }
+    return transactions;
+  });
 };
