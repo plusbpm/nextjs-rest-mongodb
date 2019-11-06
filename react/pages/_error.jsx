@@ -42,7 +42,7 @@ Error.getInitialProps = ({ res, err }) => {
   const responseStatusCode = res ? res.statusCode : null;
   const errorStatusCode = err ? err.statusCode : null;
   const statusCode = errorStatusCode || responseStatusCode;
-  if (statusCode) res.statusCode = statusCode;
+  if (res && statusCode) res.statusCode = statusCode;
   return { statusCode };
 };
 

@@ -15,6 +15,7 @@ import Replay from '@material-ui/icons/Replay';
 import TrendingDown from '@material-ui/icons/TrendingDown';
 import TrendingUp from '@material-ui/icons/TrendingUp';
 
+import FormattedDateTime from '../FormattedDateTime';
 import useStyles from './TransactionList.styles';
 
 function TransactionList({ hasData, isLoading, list, total, ...rest }) {
@@ -42,7 +43,12 @@ function TransactionList({ hasData, isLoading, list, total, ...rest }) {
           <ListItemText
             className={classes.text}
             primary={`Amount - ${amount} PW; Saldo - ${account}`}
-            secondary={`Correspondent: ${correspondent}, ${dt}`}
+            secondary={
+              // eslint-disable-next-line react/jsx-wrap-multilines
+              <span>
+                Correspondent: {correspondent}, <FormattedDateTime dt={dt} />
+              </span>
+            }
           />
           {!isLoading && (
             <Link href="/cabinet/transaction">

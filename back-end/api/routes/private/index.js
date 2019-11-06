@@ -54,7 +54,8 @@ module.exports = async fastify => {
 
   fastify.get('/transactions', { schema: { query: transactionsListSchema } }, async request => {
     const transactions = await transaction.fetch(dbAdapter, request.userId, request.query);
-    if (request.query.page > Math.ceil(transactions.total / CABINET__LIST_PER_PAGE)) {
+    const totalPages = Math.ceil(transactions.total / CABINET__LIST_PER_PAGE);
+    if (totalPages > 0 && request.query.page > totalPages) {
       const pageError = new Error('Bad request');
       pageError.statusCode = 400;
       throw pageError;
