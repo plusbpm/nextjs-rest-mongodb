@@ -37,7 +37,11 @@ const makeSubmitHandler = ({ register }, actionInquery) => data => {
     .then(() => {
       const { error } = actionInquery.getState();
       if (error) return;
-      Router.push(register ? '/' : '/cabinet');
+      if (register) {
+        Router.push('/');
+        return;
+      }
+      window.location = '/cabinet';
     });
 };
 
