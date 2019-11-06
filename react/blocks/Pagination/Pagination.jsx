@@ -17,6 +17,7 @@ function Pagination({ total, itemsPerPage }) {
   const [sizes, setSizes] = useState({ wing: 4, offsetWidth: 600 });
 
   function updateWing() {
+    if (!ref.current) return;
     const { offsetWidth } = ref.current;
     const nextWing = Math.floor((offsetWidth / PAGINATION_BUTTON_WIDTH - 5) / 2);
     setSizes({ wing: Math.max(nextWing, 1), offsetWidth });

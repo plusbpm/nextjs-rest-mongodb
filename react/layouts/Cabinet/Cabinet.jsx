@@ -32,12 +32,19 @@ const useStyles = makeStyles(theme => ({
 const CabinetLayout = () => {
   const { cabinet } = useStyles();
   const listInquery = useInquery('transactionsList');
-  const { list = [], total = 0 } = listInquery.get('data', {});
+  const data = listInquery.get('data');
+  const { list = [], total = 0 } = data || {};
   return (
     <>
       <UserInfo />
       <DefaultContainer className={cabinet} maxWidth="lg">
-        <TransactionList subheader={<Subheader />} list={list} />
+        <TransactionList
+          subheader={<Subheader />}
+          list={list}
+          total={total}
+          isLoading={listInquery.get('isLoading')}
+          hasData={!!data}
+        />
         <Pagination total={total} itemsPerPage={CABINET__LIST_PER_PAGE} />
       </DefaultContainer>
       <InqueriesErrorSnackbar />

@@ -17,24 +17,34 @@ import TrendingUp from '@material-ui/icons/TrendingUp';
 
 import useStyles from './TransactionList.styles';
 
-function TransactionList({ list, ...rest }) {
+function TransactionList({ hasData, isLoading, list, total, ...rest }) {
   const classes = useStyles();
+  const firstLoading = isLoading && !hasData;
+  if (firstLoading || total === 0)
+    return (
+      <List {...rest} className={classes.list}>
+        <ListItem dense>
+          <ListItemText primary={firstLoading ? 'Loading ...' : 'No transaction records'} />
+        </ListItem>
+      </List>
+    );
+
   return (
-    <List {...rest} className={classes.list}>
+    <List {...rest} className={`${classes.list} ${isLoading ? 'loading' : ''}`}>
       <Divider />
-      {list.map(({ _id, incoming, amount, account, correspondent, dt }) => {
-        return (
-          <ListItem dense divider className="item" key={_id}>
-            <Tooltip title={incoming ? 'debit' : 'credit'}>
-              <ListItemIcon>
-                {incoming ? <TrendingUp color="primary" /> : <TrendingDown color="error" />}
-              </ListItemIcon>
-            </Tooltip>
-            <ListItemText
-              className={classes.text}
-              primary={`Amount - ${amount} PW; Saldo - ${account}`}
-              secondary={`Correspondent: ${correspondent}, ${dt}`}
-            />
+      {list.map(({ _id, incoming, amount, account, correspondent, dt }) => (
+        <ListItem dense divider className="item" key={_id}>
+          <Tooltip title={incoming ? 'debit' : 'credit'}>
+            <ListItemIcon>
+              {incoming ? <TrendingUp color="primary" /> : <TrendingDown color="error" />}
+            </ListItemIcon>
+          </Tooltip>
+          <ListItemText
+            className={classes.text}
+            primary={`Amount - ${amount} PW; Saldo - ${account}`}
+            secondary={`Correspondent: ${correspondent}, ${dt}`}
+          />
+          {!isLoading && (
             <Link href="/cabinet/transaction">
               <ListItemSecondaryAction className={classes.secondaryAction}>
                 <Tooltip title="Repeat transaction">
@@ -44,15 +54,18 @@ function TransactionList({ list, ...rest }) {
                 </Tooltip>
               </ListItemSecondaryAction>
             </Link>
-          </ListItem>
-        );
-      })}
+          )}
+        </ListItem>
+      ))}
     </List>
   );
 }
 
 TransactionList.propTypes = {
+  isLoading: PropTypes.bool.isRequired,
+  hasData: PropTypes.bool.isRequired,
   list: PropTypes.arrayOf(PropTypes.shape()).isRequired,
+  total: PropTypes.number.isRequired,
 };
 
 export default TransactionList;

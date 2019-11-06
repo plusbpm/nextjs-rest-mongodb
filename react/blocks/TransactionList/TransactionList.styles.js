@@ -7,6 +7,9 @@ const ellipsisStyles = {
 
 export default makeStyles(theme => ({
   list: {
+    '&.loading .item': {
+      opacity: 0.4,
+    },
     minWidth: 230,
     '& .item:hover': {
       backgroundColor: theme.palette.grey[100],
