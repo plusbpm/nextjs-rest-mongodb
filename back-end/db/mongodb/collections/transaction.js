@@ -106,15 +106,20 @@ async function fetch(collection, uid, query, skip, limit) {
   const userId = convertToObjectId(uid);
   const {
     filter_correspondent: filterCorrespondent,
-    filter_amount: filterAmount,
-    filter_date: filterDate,
+    filter_amount_min: filterAmountMin,
+    filter_amount_max: filterAmountMax,
+    filter_dt: filterDate,
     sort,
   } = query;
 
   const filter = { userId };
   // TODO: check security risk with criteria
   if (filterCorrespondent) filter.correspondent = { $regex: filterCorrespondent, $options: 'i' };
-  if (filterAmount) filter.amount = parseFloat(filterAmount);
+  if (filterAmountMin || filterAmountMax) {
+    filter.amount = {};
+    if (filterAmountMin) filter.amount.$gte = parseFloat(filterAmountMin);
+    if (filterAmountMax) filter.amount.$lte = parseFloat(filterAmountMax);
+  }
   if (filterDate) filter.date = filterDate;
 
   let sortObject = { dt: -1 };

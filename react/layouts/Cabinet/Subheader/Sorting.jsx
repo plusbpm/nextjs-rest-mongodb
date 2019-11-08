@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useRouter } from 'next/router';
-import get from 'lodash/get';
 
 import Button from '@material-ui/core/Button';
 import ExpandLess from '@material-ui/icons/ExpandLess';
@@ -21,19 +19,32 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const paramKey = 'sort';
+const list = [
+  { id: 'correspondent', label: 'Name' },
+  { id: 'amount', label: 'Amount' },
+  { id: 'dt', label: 'Date' },
+];
 
-const Sorting = ({ list, onValueChange, onQueryPatch }) => {
-  const [state, setState] = useState({ id: null, direction: null });
+const getStateFromValue = value => {
+  const emptyState = { id: null, direction: null };
+  if (!value) return emptyState;
+  const [id, direction] = value.split('_');
+  const ids = list.map(({ id: currentId }) => currentId);
+  if (!['asc', 'desc'].includes(direction) || !ids.includes(id)) return emptyState;
+  return { id, direction };
+};
+
+const Sorting = ({ defaultValue, onChange }) => {
+  const [state, setState] = useState(getStateFromValue(defaultValue));
   const { container, icon, sortButton } = useStyles();
-  const router = useRouter();
 
   const { id, direction } = state;
+  const value = direction ? `${id}_${direction}` : '';
 
-  const handleNextStateAndValue = (nextState, value) => {
-    setState(nextState);
-    onValueChange(paramKey, value);
-  };
+  useEffect(() => {
+    const timer = setTimeout(onChange, 100);
+    return () => clearTimeout(timer);
+  }, [value]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const makeHandleClick = nextID => event => {
     event.preventDefault();
@@ -43,11 +54,7 @@ const Sorting = ({ list, onValueChange, onQueryPatch }) => {
     if (direction === 'desc') nextDirection = null;
     if (!direction || nextID !== id) nextDirection = 'asc';
 
-    const nextState = { id: nextID, direction: nextDirection };
-    const value = nextDirection ? `${nextID}_${nextDirection}` : null;
-    handleNextStateAndValue(nextState, value);
-
-    onQueryPatch({ [paramKey]: value });
+    setState({ id: nextID, direction: nextDirection });
   };
 
   const getIcon = currentId => {
@@ -55,17 +62,6 @@ const Sorting = ({ list, onValueChange, onQueryPatch }) => {
     const Element = direction === 'asc' ? ExpandLess : ExpandMore;
     return <Element color="secondary" className={icon} />;
   };
-
-  useEffect(() => {
-    const value = get(router, ['query', paramKey]);
-    if (!value) return;
-
-    const [defaultID, defaultDirection] = value.split('_');
-    const ids = list.map(({ id: currentId }) => currentId);
-    if (!['asc', 'desc'].includes(defaultDirection) || !ids.includes(defaultID)) return;
-
-    handleNextStateAndValue({ id: defaultID, direction: defaultDirection }, value);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Grid container className={container}>
@@ -75,24 +71,25 @@ const Sorting = ({ list, onValueChange, onQueryPatch }) => {
           {getIcon(currentId)}
         </Button>
       ))}
+      <input type="hidden" value={value} name="sort" />
     </Grid>
   );
 };
 
 Sorting.propTypes = {
-  list: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      label: PropTypes.string.isRequired,
-    }),
-  ).isRequired,
-  onValueChange: PropTypes.func,
-  onQueryPatch: PropTypes.func,
+  defaultValue: PropTypes.oneOf([
+    'correspondent_asc',
+    'correspondent_desc',
+    'amount_asc',
+    'amount_desc',
+    'dt_asc',
+    'dt_desc',
+  ]),
+  onChange: PropTypes.func.isRequired,
 };
 
 Sorting.defaultProps = {
-  onValueChange: () => {},
-  onQueryPatch: () => {},
+  defaultValue: undefined,
 };
 
 export default Sorting;

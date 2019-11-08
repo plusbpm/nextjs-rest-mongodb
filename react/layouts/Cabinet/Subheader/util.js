@@ -1,7 +1,7 @@
 import Router from 'next/router';
 import partialRight from 'lodash/partialRight';
 
-import omitEmpty from '../../util/omitEmpty';
+import omitEmpty from '../../../util/omitEmpty';
 
 const updateQueryWithRouter = (queryPatch, method) => {
   const { pathname, query } = Router;

@@ -7,7 +7,7 @@ import invariant from '../../shared/util/invariant';
 
 const omitPredicate = value => ['', null, undefined, NaN].indexOf(value) !== -1;
 
-const getData = node => omitBy(getFormData(node), omitPredicate);
+const getData = node => (node ? omitBy(getFormData(node), omitPredicate) : {});
 
 const getErrorsMap = errors =>
   (errors || []).reduce((acc, error) => {
@@ -24,7 +24,7 @@ const getErrorsMap = errors =>
     return { ...acc, [propertyPath]: { ...error, message } };
   }, {});
 
-export default ({ validate, submit }) => {
+export default ({ validate, submit, validateOnChange }) => {
   invariant(!!validate, 'Validate function is required.');
 
   const ref = useRef(null);
@@ -41,14 +41,20 @@ export default ({ validate, submit }) => {
     event.preventDefault();
     const [nextState, valid, form] = validateEvent();
     setState({ ...nextState, submitedOnce: true });
-    if (valid) submit(form);
+    if (valid && submit) submit(form);
   };
 
   const onChange = () => {
-    if (isEmpty(state.errors) && !state.submitedOnce) return;
+    if (isEmpty(state.errors) && !state.submitedOnce && !validateOnChange) return;
     const [nextState, valid] = validateEvent();
     const complete = state.submitedOnce && valid;
     setState({ ...nextState, submitedOnce: complete ? false : nextState.submitedOnce });
+  };
+
+  const toggleValidate = () => {
+    const validateResult = validateEvent();
+    setState(validateResult[0]);
+    return validateResult;
   };
 
   const formProps = {
@@ -57,5 +63,10 @@ export default ({ validate, submit }) => {
     onChange,
   };
 
-  return [formProps, state.errors];
+  const extra = {
+    formData: getData(ref.current),
+    toggleValidate,
+  };
+
+  return [formProps, state.errors, extra];
 };
