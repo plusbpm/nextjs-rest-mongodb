@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
+import isEqual from 'lodash/isEqual';
 import { useRouter } from 'next/router';
 
 import Badge from '@material-ui/core/Badge';
@@ -27,11 +29,11 @@ export const allFields = [
   'sort',
 ];
 
-const makeCountPredicate = (regex, formData, errors) => (count, field) =>
-  count + (regex.test(field) && !!formData[field] && !errors[field] ? 1 : 0);
+const makeCountPredicate = (regex, formData) => (count, field) =>
+  count + (regex.test(field) && !!formData[field] ? 1 : 0);
 
 /* eslint-disable camelcase */
-const getDefaultValues = ({
+const getDataFrom = ({
   filter_correspondent,
   filter_amount_min,
   filter_amount_max,
@@ -50,19 +52,33 @@ function Subheader({ onChange }) {
   const { bage, wrap } = useStyles();
   const [openFilters, setOpenFilters] = useState(false);
   const [openSortings, setOpenSortings] = useState(false);
-  const { query } = useRouter();
-
-  const [formProps, errors, { toggleValidate, formData }] = useFormValidation({
+  const {
+    query: { page, ...query },
+  } = useRouter();
+  const queryData = getDataFrom(query);
+  const [formData, setFormData] = useState(queryData);
+  const [formProps, errors] = useFormValidation({
     validate,
     validateOnChange: true,
+    submit: onChange,
   });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => onChange(formData, errors), [formData, errors]);
 
-  const defaultValues = getDefaultValues(query);
+  const submitDisabled = !isEmpty(errors) || isEqual(queryData, formData);
 
-  const filtersCount = allFields.reduce(makeCountPredicate(/^filter/, formData, errors), 0);
-  const sortsCount = allFields.reduce(makeCountPredicate(/^sort/, formData, errors), 0);
+  const makeChangeHandler = field => event => {
+    const { value } = event.target;
+    const nexFormData = { ...formData, [field]: value };
+    setFormData(nexFormData);
+  };
+
+  const handleReset = () => {
+    const nextFormData = getDataFrom({});
+    setFormData(nextFormData);
+    onChange(nextFormData);
+  };
+
+  const filtersCount = allFields.reduce(makeCountPredicate(/^filter/, queryData), 0);
+  const sortsCount = allFields.reduce(makeCountPredicate(/^sort/, queryData), 0);
 
   return (
     <>
@@ -76,7 +92,8 @@ function Subheader({ onChange }) {
           <Collapse in={openFilters}>
             <TextInput
               className="filterField"
-              defaultValue={defaultValues.filter_correspondent}
+              value={formData.filter_correspondent || ''}
+              onChange={makeChangeHandler('filter_correspondent')}
               name="filter_correspondent"
               label="Correspondent name"
               error={!!errors.filter_correspondent}
@@ -84,7 +101,8 @@ function Subheader({ onChange }) {
             />
             <TextInput
               className="filterField"
-              defaultValue={defaultValues.filter_amount_min}
+              value={formData.filter_amount_min || ''}
+              onChange={makeChangeHandler('filter_amount_min')}
               name="filter_amount_min"
               type="number"
               label="Amount min"
@@ -95,7 +113,8 @@ function Subheader({ onChange }) {
             />
             <TextInput
               className="filterField"
-              defaultValue={defaultValues.filter_amount_max}
+              value={formData.filter_amount_max || ''}
+              onChange={makeChangeHandler('filter_amount_max')}
               name="filter_amount_max"
               type="number"
               label="Amount max"
@@ -106,7 +125,8 @@ function Subheader({ onChange }) {
             />
             <TextInput
               className="filterField"
-              defaultValue={defaultValues.filter_dt}
+              value={formData.filter_dt || ''}
+              onChange={makeChangeHandler('filter_dt')}
               name="filter_dt"
               type="date"
               label="Date"
@@ -125,10 +145,9 @@ function Subheader({ onChange }) {
             <Badge badgeContent={filtersCount} color="primary" className={bage} />
           </Button>
         </div>
-
         <div className={wrap}>
           <Collapse in={openSortings}>
-            <Sorting onChange={toggleValidate} defaultValue={defaultValues.sort} />
+            <Sorting onChange={makeChangeHandler('sort')} value={formData.sort} />
           </Collapse>
           <Button
             onClick={() => setOpenSortings(!openSortings)}
@@ -138,6 +157,18 @@ function Subheader({ onChange }) {
           >
             {openSortings ? 'Hide sortings' : 'Show sortings'}
             <Badge badgeContent={sortsCount} color="primary" className={bage} />
+          </Button>
+        </div>
+        <div className={wrap}>
+          <Button type="submit" className="submit-button" disabled={submitDisabled}>
+            Submit
+          </Button>
+          <Button
+            onClick={handleReset}
+            className="reset-button"
+            disabled={filtersCount + sortsCount === 0}
+          >
+            Reset filters and sorting
           </Button>
         </div>
       </form>

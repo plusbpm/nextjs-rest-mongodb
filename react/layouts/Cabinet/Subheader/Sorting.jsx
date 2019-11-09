@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import Button from '@material-ui/core/Button';
@@ -34,17 +34,11 @@ const getStateFromValue = value => {
   return { id, direction };
 };
 
-const Sorting = ({ defaultValue, onChange }) => {
-  const [state, setState] = useState(getStateFromValue(defaultValue));
+const getValueFromState = ({ id, direction }) => (direction ? `${id}_${direction}` : '');
+
+const Sorting = ({ value, onChange }) => {
   const { container, icon, sortButton } = useStyles();
-
-  const { id, direction } = state;
-  const value = direction ? `${id}_${direction}` : '';
-
-  useEffect(() => {
-    const timer = setTimeout(onChange, 100);
-    return () => clearTimeout(timer);
-  }, [value]); // eslint-disable-line react-hooks/exhaustive-deps
+  const { id, direction } = getStateFromValue(value);
 
   const makeHandleClick = nextID => event => {
     event.preventDefault();
@@ -54,7 +48,8 @@ const Sorting = ({ defaultValue, onChange }) => {
     if (direction === 'desc') nextDirection = null;
     if (!direction || nextID !== id) nextDirection = 'asc';
 
-    setState({ id: nextID, direction: nextDirection });
+    const nextState = { id: nextID, direction: nextDirection };
+    onChange({ target: { value: getValueFromState(nextState) } });
   };
 
   const getIcon = currentId => {
@@ -71,13 +66,13 @@ const Sorting = ({ defaultValue, onChange }) => {
           {getIcon(currentId)}
         </Button>
       ))}
-      <input type="hidden" value={value} name="sort" />
+      <input type="hidden" value={value || ''} name="sort" />
     </Grid>
   );
 };
 
 Sorting.propTypes = {
-  defaultValue: PropTypes.oneOf([
+  value: PropTypes.oneOf([
     'correspondent_asc',
     'correspondent_desc',
     'amount_asc',
@@ -89,7 +84,7 @@ Sorting.propTypes = {
 };
 
 Sorting.defaultProps = {
-  defaultValue: undefined,
+  value: undefined,
 };
 
 export default Sorting;

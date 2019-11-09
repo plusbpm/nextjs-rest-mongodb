@@ -8,16 +8,19 @@ export default makeStyles(theme => ({
   wrap: {
     '& .filterField': {
       '& input': {
-        paddingLeft: 16,
+        paddingLeft: theme.spacing(2),
       },
       '& label': {
-        paddingLeft: 16,
+        paddingLeft: theme.spacing(2),
       },
       '& label.MuiInputLabel-shrink': {
-        left: 4,
+        left: theme.spacing(0.5),
+      },
+      '& > p': {
+        paddingLeft: theme.spacing(2),
       },
     },
-    '& .switch-button': {
+    '& .switch-button, .submit-button, .reset-button': {
       '&.open': {
         marginTop: theme.spacing(1),
       },
@@ -25,8 +28,9 @@ export default makeStyles(theme => ({
     },
     padding: theme.spacing(0, 0, 2, 0),
     [theme.breakpoints.down('xs')]: {
-      '& .switch-button': {
+      '& .switch-button, .submit-button, .reset-button': {
         marginLeft: theme.spacing(2),
+        marginBottom: theme.spacing(1),
       },
       '& .filterField label': {
         left: 0,

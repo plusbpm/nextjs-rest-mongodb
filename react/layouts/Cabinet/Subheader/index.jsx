@@ -7,7 +7,10 @@ import Subheader, { allFields } from './Subheader';
 import omitEmpty from '../../../util/omitEmpty';
 
 const updateQueryWithRouter = queryPatch => {
-  const { pathname, query } = Router;
+  const {
+    pathname,
+    query: { page, ...query },
+  } = Router;
   const nextQuery = omitEmpty({ ...query, ...queryPatch });
   if (!isEqual(query, nextQuery)) Router.replace({ pathname, query: nextQuery });
 };
@@ -18,11 +21,8 @@ export default class SubheaderIndex extends PureComponent {
     this.timer = delay(this.delayedChangeHandler, 300, ...args);
   };
 
-  delayedChangeHandler = (form, errors) => {
-    const patch = allFields.reduce(
-      (acc, field) => (errors[field] ? acc : { ...acc, [field]: form[field] }),
-      {},
-    );
+  delayedChangeHandler = form => {
+    const patch = allFields.reduce((acc, field) => ({ ...acc, [field]: form[field] }), {});
     updateQueryWithRouter(patch);
   };
 
