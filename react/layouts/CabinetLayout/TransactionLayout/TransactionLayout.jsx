@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const Transaction = () => {
+const TransactionLayout = () => {
   const { transaction } = useStyles();
   return (
     <>
@@ -38,7 +38,7 @@ const Transaction = () => {
   );
 };
 
-Transaction.getInitialProps = async ctx => {
+TransactionLayout.getInitialProps = async ctx => {
   redirectWith(ctx, '/', userId => !userId);
   const transactionID = get(ctx, 'query.transactionID');
   if (!transactionID) return null;
@@ -46,9 +46,9 @@ Transaction.getInitialProps = async ctx => {
   return ctx.restClient
     .getInquery('baseTransaction', {
       endpoint: '/private/transaction',
-      query: { transactionID },
+      refetchOnReconnect: true,
     })
-    .send();
+    .send({ query: { transactionID } });
 };
 
-export default Transaction;
+export default TransactionLayout;

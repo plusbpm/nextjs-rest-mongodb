@@ -59,6 +59,7 @@ CabinetLayout.getInitialProps = async ctx => {
     .getInquery('transactionsList', {
       endpoint: '/private/transactions',
       throwErrors: true,
+      refetchOnReconnect: true,
     })
     .send({ query: ctx.query });
 };

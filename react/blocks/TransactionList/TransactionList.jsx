@@ -51,7 +51,7 @@ function TransactionList({ hasData, isLoading, list, total, ...rest }) {
             }
           />
           {!isLoading && (
-            <Link href="/cabinet/transaction">
+            <Link href={`/cabinet/transaction?transactionID=${_id}`}>
               <ListItemSecondaryAction className={classes.secondaryAction}>
                 <Tooltip title="Repeat transaction">
                   <IconButton color="secondary">

@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
@@ -57,21 +59,20 @@ const makeSubmitHandler = (transactionInquery, handleSuccess) => data => {
 };
 
 function TransactionForm() {
+  const router = useRouter();
   const { baseTransaction, transaction } = useInqueriesMap({
     ids: ['transaction', 'baseTransaction'],
   });
+  const isEdit = !!router.query.transactionID;
 
   const { actions, successCard, successActions } = useStyles();
-  const [corrID, setCorrID] = useState(baseTransaction.get('data.correspondentID', ''));
-  const [transferNumber, setTransferNumber] = useState(0);
+  const [corrID, setCorrID] = useState(
+    isEdit ? baseTransaction.get('data.correspondentID', '') : '',
+  );
   const [success, setSuccess] = useState(false);
 
   const handleSuccess = () => setSuccess(true);
-  const handleSuccessClose = () => {
-    setSuccess(false);
-    setCorrID('');
-    setTransferNumber(transferNumber + 1);
-  };
+  const handleSuccessClose = () => setSuccess(false);
 
   const [formProps, errors] = useFormValidation({
     validate,
@@ -90,9 +91,11 @@ function TransactionForm() {
           </Typography>
         </CardContent>
         <CardActions className={successActions}>
-          <Button size="small" color="primary" href="/cabinet">
-            To history
-          </Button>
+          <Link href="/cabinet">
+            <Button size="small" color="primary">
+              To history
+            </Button>
+          </Link>
           <Button size="small" color="primary" onClick={handleSuccessClose}>
             Make another transaction
           </Button>
@@ -101,7 +104,7 @@ function TransactionForm() {
     );
 
   return (
-    <form {...formProps} key={transferNumber}>
+    <form {...formProps}>
       <TextInputSuggest
         name="correspondent"
         label="Correspondent"
@@ -115,14 +118,14 @@ function TransactionForm() {
         error={!!corrError}
         helperText={corrError && corrError.message}
         disabled={success}
-        defaultValue={baseTransaction.get('data.correspondent', '')}
+        defaultValue={isEdit ? baseTransaction.get('data.correspondent', '') : ''}
       />
       <TextField name="correspondentID" type="hidden" value={corrID} />
       <TextInput
         name="amount"
         type="number"
         label="Amount"
-        defaultValue={baseTransaction.get('data.amount')}
+        defaultValue={isEdit ? baseTransaction.get('data.amount') : ''}
         inputProps={{ step: 0.01 }}
         error={!!amount}
         helperText={amount && amount.message}

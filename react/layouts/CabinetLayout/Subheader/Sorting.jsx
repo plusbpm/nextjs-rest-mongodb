@@ -66,13 +66,14 @@ const Sorting = ({ value, onChange }) => {
           {getIcon(currentId)}
         </Button>
       ))}
-      <input type="hidden" value={value || ''} name="sort" />
+      <input type="hidden" value={value} name="sort" />
     </Grid>
   );
 };
 
 Sorting.propTypes = {
   value: PropTypes.oneOf([
+    '',
     'correspondent_asc',
     'correspondent_desc',
     'amount_asc',
@@ -84,7 +85,7 @@ Sorting.propTypes = {
 };
 
 Sorting.defaultProps = {
-  value: undefined,
+  value: '',
 };
 
 export default Sorting;

@@ -10,6 +10,7 @@ import { ThemeProvider } from '@material-ui/styles';
 import AppProvider from '../appProvider';
 import { createClient } from '../restClient';
 import theme from '../material-ui/theme';
+import initWS from '../wsClient';
 
 const mapFunc = inquery => {
   const state = inquery.getState();
@@ -27,7 +28,10 @@ export default class MyApp extends App {
     const { cookie } = ctx.req ? ctx.req.headers : {};
     const restClient = createClient({ globalSendOptions: { headers: { cookie } } });
 
-    const userInquery = restClient.getInquery('user', { endpoint: '/user' });
+    const userInquery = restClient.getInquery('user', {
+      endpoint: '/user',
+      refetchOnReconnect: true,
+    });
     if (!userInquery.get('data')) await userInquery.send();
 
     const pageProps =
@@ -68,6 +72,8 @@ export default class MyApp extends App {
 
   render() {
     const { Component, pageProps } = this.props;
+    initWS(this.restClient);
+
     return (
       <>
         <Head />

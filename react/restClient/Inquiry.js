@@ -3,9 +3,10 @@ import fetch from 'isomorphic-unfetch';
 import get from 'lodash/get';
 
 class Inquiry {
-  constructor(client, options, { sendOptions, ...initialState } = {}) {
+  constructor(client, options, { sendOptions, lastSendOptions, ...initialState } = {}) {
     this.client = client;
     this.options = { ...sendOptions, ...options };
+    this.lastSendOptions = lastSendOptions;
     this.state = {
       canceled: false,
       data: null,
@@ -26,7 +27,7 @@ class Inquiry {
 
   getState = () => {
     const { number, ...state } = this.state;
-    return { ...state, sendOptions: this.options };
+    return { ...state, sendOptions: this.options, lastSendOptions: this.lastSendOptions };
   };
 
   reset = () => {
@@ -61,6 +62,8 @@ class Inquiry {
   send = options => {
     const number = this.client.getNextInqueryNumber();
     this.abort();
+    this.lastSendOptions = options;
+
     const { endpoint, query, throwErrors, ...fetchOptions } = {
       ...this.options,
       ...options,
@@ -98,6 +101,8 @@ class Inquiry {
         }
       });
   };
+
+  resend = () => this.send(this.lastSendOptions);
 
   abort = () => {
     if (this.abortController) {

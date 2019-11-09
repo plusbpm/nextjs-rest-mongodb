@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import Badge from '@material-ui/core/Badge';
@@ -147,7 +148,7 @@ function Subheader({ onChange }) {
         </div>
         <div className={wrap}>
           <Collapse in={openSortings}>
-            <Sorting onChange={makeChangeHandler('sort')} value={formData.sort} />
+            <Sorting onChange={makeChangeHandler('sort')} value={formData.sort || ''} />
           </Collapse>
           <Button
             onClick={() => setOpenSortings(!openSortings)}
@@ -170,6 +171,9 @@ function Subheader({ onChange }) {
           >
             Reset filters and sorting
           </Button>
+          <Link href="cabinet/transaction">
+            <Button className="add-button">Make transaction</Button>
+          </Link>
         </div>
       </form>
     </>

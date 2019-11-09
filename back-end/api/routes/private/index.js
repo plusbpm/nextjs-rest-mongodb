@@ -15,7 +15,7 @@ const throwForbidden = () => {
 };
 
 module.exports = async fastify => {
-  const { dbAdapter } = fastify;
+  const { dbAdapter, websocket } = fastify;
 
   fastify.validation.addSchemas([...transactionPostSchemas, objectIdSchema]);
 
@@ -39,6 +39,8 @@ module.exports = async fastify => {
     async request => {
       const { correspondentID, amount } = request.body;
       await transaction.create(dbAdapter, request.userId, correspondentID, parseFloat(amount));
+      websocket.send(request.userId, 'flush');
+      websocket.send(correspondentID, 'flush');
       return null;
     },
   );

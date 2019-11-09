@@ -20,7 +20,7 @@ export default makeStyles(theme => ({
         paddingLeft: theme.spacing(2),
       },
     },
-    '& .switch-button, .submit-button, .reset-button': {
+    '& .switch-button, .submit-button, .reset-button, .add-button': {
       '&.open': {
         marginTop: theme.spacing(1),
       },
@@ -28,7 +28,7 @@ export default makeStyles(theme => ({
     },
     padding: theme.spacing(0, 0, 2, 0),
     [theme.breakpoints.down('xs')]: {
-      '& .switch-button, .submit-button, .reset-button': {
+      '& .switch-button, .submit-button, .reset-button, .add-button': {
         marginLeft: theme.spacing(2),
         marginBottom: theme.spacing(1),
       },

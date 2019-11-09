@@ -1,1 +1,1 @@
-export { default } from '../../layouts/Cabinet/Transaction';
+export { default } from '../../layouts/CabinetLayout/TransactionLayout';
