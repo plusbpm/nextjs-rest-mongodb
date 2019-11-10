@@ -1,25 +1,29 @@
 version: '3'
 
 services:
-  node:
+  backend:
     build:
       context: ../
-      dockerfile: ./docker/node/Dockerfile
-    environment:
-      - PORT=5000
-      - MONGODB_URL=mongodb://mongo:27017/dockerdev
+      dockerfile: ./docker/backend/Dockerfile
     links:
       - mongo
-    ports:
-      - 80:5000
-    volumes:
-      - ../api:/app_base/api/:ro
-      - ../src:/app_base/src/:ro
-      - ../pages:/app_base/pages:rw
-      - ../server.js:/app_base/server.js:ro
-      - ../static:/app_base/static:ro
-      - ../.env.example:/app_base/.env.example:ro
-      - ../.env:/app_base/.env:ro
+
+  react:
+    build:
+      context: ../
+      dockerfile: ./docker/react/Dockerfile
+    links:
+      - backend
 
   mongo:
-    image: mvertes/alpine-mongo:latest
+    image: plsbpm/mongodb-replica:scratch
+
+  nginx:
+    build:
+      context: ../
+      dockerfile: ./docker/nginx/Dockerfile
+    links:
+      - backend
+      - react
+    ports:
+      - 80:80
